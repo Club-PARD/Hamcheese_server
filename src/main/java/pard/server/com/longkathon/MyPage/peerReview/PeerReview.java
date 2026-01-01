@@ -1,4 +1,4 @@
-package pard.server.com.longkathon.peerReview;
+package pard.server.com.longkathon.MyPage.peerReview;
 import jakarta.persistence.*;
 import lombok.*;
 

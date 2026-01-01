@@ -1,4 +1,4 @@
-package pard.server.com.longkathon.User;
+package pard.server.com.longkathon.MyPage.user;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +20,6 @@ public class User {
     private String secondMajor; //2전공
     private String phoneNumber; //전화번호
     private String gpa; // 학점
-    private String introduction; //자기한줄소개
 
     private int grade; //학년
     private int semester; //학기수

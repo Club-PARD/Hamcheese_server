@@ -1,4 +1,4 @@
-package pard.server.com.longkathon.skillStackList;
+package pard.server.com.longkathon.MyPage.skillStackList;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +12,7 @@ public class skillStackList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long skillStackListId;
 
-    private Long userId; //누구에 대한 유저 스택인지
+    private Long introductionId; //어떤 자기소개에 대한 스택인지
 
     private String skillName; //스택이름
 }
