@@ -12,7 +12,11 @@ public class Introduction { // 마이
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long introductionId;
 
-    private Long userId ; //어떤 마이페이지에 속하는지
+    private Long userId ; //어떤 유저에 속하는지
 
     private String oneLine; //한줄소개
+
+    public void updateIntroduction(String newOneLine) {
+        this.oneLine = newOneLine;
+    }
 }

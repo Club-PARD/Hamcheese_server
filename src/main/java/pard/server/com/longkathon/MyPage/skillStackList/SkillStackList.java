@@ -7,12 +7,12 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class skillStackList {
+public class SkillStackList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long skillStackListId;
 
-    private Long introductionId; //어떤 자기소개에 대한 스택인지
+    private Long userId; //어떤 유저에 대한 스택인지
 
     private String skillName; //스택이름
 }

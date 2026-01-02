@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class userFile { //프로필에 속하는 이미지 파일
+public class UserFile { //프로필에 속하는 이미지 파일
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userFileId;

@@ -1,0 +1,57 @@
+package pard.server.com.longkathon.MyPage.user;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import pard.server.com.longkathon.MyPage.activity.ActivityDTO;
+import pard.server.com.longkathon.poking.PokingRes;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class UserDTO {
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserRes1 { // 메이트 프로필 페이지
+        //자기소개 게시물 눌렀을때 해당 계정의 프로필로 이동)
+        //1. 프로필관리 섹션
+        private String name;
+        private String email;
+        private String department;
+        private String firstMajor;
+        private String secondMajor;
+        private float gpa;
+        private String studentId;
+        private int semester;
+        private String imageUrl; //****
+
+        //2. 자기소개 섹션
+        private String introduction;
+        @Builder.Default
+        private List<String> skillList = new ArrayList<>();
+
+        //3. 활동내역 섹션
+        @Builder.Default
+        private List<ActivityDTO> activity = new ArrayList<>();
+
+        //4. 동료평가 섹션
+        @Builder.Default
+        private Map<String, Integer> peerGoodKeyword = new HashMap<>();
+        private int goodKeywordCount; //유저가 받은 긍정 키워드 총 개수
+
+        @Builder.Default
+        private Map<String, Integer> peerBadKeyword = new HashMap<>();
+        private int badKeywordCount; //유저가 받은 부정 키워드 총 개수
+
+        //5. 찌르기
+        @Builder.Default
+        private List<PokingRes.pokingRes1> poking = new ArrayList<>();
+//
+        //6. 동일계정인지 판단
+        private Boolean canEdit;
+    }
+}

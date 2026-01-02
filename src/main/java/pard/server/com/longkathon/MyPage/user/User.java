@@ -18,8 +18,9 @@ public class User {
     private String department; //학부
     private String firstMajor; //1전공
     private String secondMajor; //2전공
-    private String phoneNumber; //전화번호
-    private String gpa; // 학점
+    private float gpa; // 학점
+
+    private String socialId;
 
     private int grade; //학년
     private int semester; //학기수
