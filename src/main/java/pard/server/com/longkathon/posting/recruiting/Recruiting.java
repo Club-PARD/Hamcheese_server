@@ -2,6 +2,9 @@ package pard.server.com.longkathon.posting.recruiting;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @AllArgsConstructor
@@ -29,6 +32,29 @@ public class Recruiting { //구인 글 포스팅
     private String title;//제목
 
     private String context; //내용
+
+    @Column(updatable = false)
+    private LocalDateTime date;
+
+    @PrePersist // 생성 시점으로 자동 설정
+    public void prePersist() {
+        if (this.date == null) {
+            this.date = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
+        }
+    }
+
+    // 모집글 수정
+    public void update(RecruitingDTO.RecruitingPatchReq req) {
+        if (req.getProjectType() != null) this.projectType = req.getProjectType();
+        if (req.getProjectSpecific() != null) this.projectSpecific = req.getProjectSpecific();
+        if (req.getClasses() != null) this.classes = req.getClasses();
+        if (req.getTopic() != null) this.topic = req.getTopic();
+        if (req.getTotalPeople() != null) this.totalPeople = req.getTotalPeople();
+        if (req.getRecruitPeople() != null) this.recruitPeople = req.getRecruitPeople();
+        if (req.getTitle() != null) this.title = req.getTitle();
+        if (req.getContext() != null) this.context = req.getContext();
+    }
+
 
 
 }

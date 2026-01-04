@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class myKeyword {
+public class MyKeyword {// 구인글에 포함되는 자신이 가장 잘할 수 있는 키워드
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long myKeywordId;

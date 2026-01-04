@@ -15,4 +15,5 @@ public class Poking {
     private Long sendId; // 찌르기를 보낸사람
 
     private Long receiveId; //찌르기를 받는사람
+
 }

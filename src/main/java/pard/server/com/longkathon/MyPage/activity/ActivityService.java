@@ -11,7 +11,7 @@ import java.util.List;
 public class ActivityService {
     private final ActivityRepo activityRepo;
     @Transactional
-    public void deleteAndCreate (List<ActivityDTO> activityList, Long userId) {
+    public void deleteAndCreate (Long userId, List<ActivityDTO> activityList) {
         activityRepo.deleteAllByUserId(userId);
 
         // 2) DTO 리스트 -> Activity 엔티티 리스트로 변환

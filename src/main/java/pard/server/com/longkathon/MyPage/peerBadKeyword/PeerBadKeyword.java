@@ -17,4 +17,9 @@ public class PeerBadKeyword {
     private String keyword; //어떤 키워드인지
 
     private int count; //해당 키워드
+
+    public void increaseCount(int delta) {
+        this.count += delta;
+    }
+
 }

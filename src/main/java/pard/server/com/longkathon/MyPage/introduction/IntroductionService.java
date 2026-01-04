@@ -10,16 +10,16 @@ public class IntroductionService {
     private final IntroductionRepo introductionRepo;
 
     @Transactional
-    public void createOrUpdate (IntroductionDTO dto) {
-        Introduction intro = introductionRepo.findById(dto.getUserId()).orElse(null);
+    public void createOrUpdate (Long userId, String oneLine) {
+        Introduction intro = introductionRepo.findById(userId).orElse(null);
         if (intro == null) { //첫 소개글이면 생성하고
             Introduction introduction = Introduction.builder()
-                    .userId(dto.getUserId())
-                    .oneLine(dto.getOneLine())
+                    .userId(userId)
+                    .oneLine(oneLine)
                     .build();
             introductionRepo.save(introduction);
         }else{//이미 생성된게 있으면 수정하라
-            intro.updateIntroduction(dto.getOneLine());
+            intro.updateIntroduction(oneLine);
         }
     }
 

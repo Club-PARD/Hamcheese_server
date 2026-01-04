@@ -4,4 +4,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IntroductionRepo extends JpaRepository<Introduction, Long> {
+    Introduction findByUserId(Long userId);
 }

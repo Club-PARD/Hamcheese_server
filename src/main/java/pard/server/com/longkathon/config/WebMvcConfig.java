@@ -1,4 +1,4 @@
-package pard.server.com.longkathon.login;
+package pard.server.com.longkathon.config;
 import org.springframework.boot.mustache.servlet.view.MustacheViewResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;

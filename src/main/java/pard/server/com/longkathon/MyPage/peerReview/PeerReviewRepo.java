@@ -5,4 +5,5 @@ import pard.server.com.longkathon.MyPage.introduction.Introduction;
 
 @Repository
 public interface PeerReviewRepo extends JpaRepository<PeerReview, Long>{
+
 }

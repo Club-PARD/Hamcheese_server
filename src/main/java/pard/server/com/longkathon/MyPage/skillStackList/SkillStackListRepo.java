@@ -7,6 +7,6 @@ import java.util.List;
 @Repository
 public interface SkillStackListRepo extends JpaRepository<SkillStackList, Long>{
     void deleteAllByUserId(Long userId);
-    List<String> findAllByUserId(Long userId);
+    List<SkillStackList> findAllByUserId(Long userId);
 
 }

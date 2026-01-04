@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserFileRepo extends JpaRepository<UserFile, Long>{
     UserFile findByUserId(Long userId);
+
+    void deleteAllByUserId(Long userId);
 }

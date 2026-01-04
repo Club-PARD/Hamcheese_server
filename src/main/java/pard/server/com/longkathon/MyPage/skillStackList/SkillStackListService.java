@@ -10,7 +10,7 @@ public class SkillStackListService {
     private final SkillStackListRepo skillStackListRepo;
 
     @Transactional
-    public void deleteAndCreate (List<String> skillList, Long userId){
+    public void deleteAndCreate (Long userId, List<String> skillList){
         skillStackListRepo.deleteAllByUserId(userId);
 
         // 2) DTO 리스트 -> SkillStackList 엔티티 리스트로 변환
@@ -25,6 +25,8 @@ public class SkillStackListService {
     }
 
     public List<String> read (Long userId){ //해당 유저의 skillList를 모두 불러온다.
-        return skillStackListRepo.findAllByUserId(userId);
+        return skillStackListRepo.findAllByUserId(userId).stream()
+                .map(SkillStackList::getSkillName)
+                .toList();
     }
 }
