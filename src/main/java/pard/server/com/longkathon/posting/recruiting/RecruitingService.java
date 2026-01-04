@@ -230,8 +230,6 @@ public class RecruitingService {
     public List<RecruitingDTO.RecruitingRes4> viewRecruitingMine(Long myId) { // 내 모집글 조회
         List<Recruiting> recruitings = recruitingRepo.findByUserIdOrderByRecruitingIdDesc(myId);
 
-
-
         return recruitings.stream()
                 .map(r -> {
                     String writerName = userRepo.findById(r.getUserId())

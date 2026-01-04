@@ -147,10 +147,6 @@ public class RecruitingDTO {
         @Builder.Default
         private List<String> myKeyword = new ArrayList<>();
         private String date;
-        @Builder.Default
-        private List<RecruitingDTO.RecruitingRes_recentPosts> postingList = new ArrayList<>();
-        private Boolean canEdit;
-
     }
 
 
