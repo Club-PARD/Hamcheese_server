@@ -2,9 +2,9 @@ package pard.server.com.longkathon.MyPage.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pard.server.com.longkathon.MyPage.introduction.IntroductionService;
 import pard.server.com.longkathon.MyPage.userFile.UserFileService;
 import pard.server.com.longkathon.s3.AwsS3Service;
 
@@ -40,27 +40,36 @@ public class UserController {
         return userService.readMyProfile(myId);
     }
 
-    //내 프로필 수정
-    @PatchMapping(value = "/update/{myId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void update(
+    @DeleteMapping("myProfile/{myId}")
+    public void deleteMyProfile(@PathVariable Long myId) {
+        userFileService.deleteImageFile(myId);
+    }
+
+    @PostMapping(value = "/updateImage/{myId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void updateImage(
             @PathVariable Long myId,
-            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-            @RequestPart("data") String dataJson
-    ) throws Exception {
-        UserDTO.UserRes3 userReq =
-                new ObjectMapper().readValue(dataJson, UserDTO.UserRes3.class);
-
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage
+    ) {
         String fileName = null;
-
         // ✅ 파일이 있을 때만 삭제/업로드 실행
         if (profileImage != null && !profileImage.isEmpty()) {
             userFileService.updateImageFile(myId);      // 기존 사진 DB, aws에서 삭제(있다면)
-            fileName = awsS3Service.uploadFile(profileImage); // 새 사진 업로드
+            fileName = awsS3Service.uploadFile(profileImage); // 새 사진 aws 업로드
+            userFileService.createImageFile(myId, fileName); //db에 파일 이름 유지
         }
-
-        // ✅ fileName이 null이면 서비스에서 "이미지 변경 없음"으로 처리
-        userService.updateMyprofile(myId, userReq, fileName);
     }
+
+
+    //내 프로필 수정
+    @PatchMapping(value = "/update/{myId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> update(
+            @PathVariable Long myId,
+            @RequestBody UserDTO.UserRes3 userReq
+    ) {
+        userService.updateMyprofile(myId, userReq);
+        return ResponseEntity.ok().build();
+    }
+
 
 
     @GetMapping("myPeerReview/{myId}") //내 동료평가 탭에 띄울 동료평가들을 가져온다
@@ -81,7 +90,7 @@ public class UserController {
 
         // 파일이 "존재하고", "비어있지 않을 때만" 업로드
         if (profileImage != null && !profileImage.isEmpty()) {
-            fileName = awsS3Service.uploadFile(profileImage);
+            fileName = awsS3Service.uploadFile(profileImage); //s3에 업로드
         }
 
         return userService.createUser(userReq, fileName);
@@ -92,9 +101,19 @@ public class UserController {
         return userService.findAll();
     }
 
-    /*@GetMapping("filter")
-    public List<UserDTO.UserRes5> filter(@RequestBody UserDTO.UserReq2 userReq) {
-        return
-    }*/
+    @GetMapping("/filter") // 예: /user/filter?departments=컴공,전자&name=길동
+    public ResponseEntity<List<UserDTO.UserRes5>> filter(
+            @RequestParam(name = "departments", required = false) List<String> departments,
+            @RequestParam(name = "name", required = false) String name
+    ) {
+        return ResponseEntity.ok(userService.filter(departments, name));
+    }
+
+    @GetMapping("firstPage")//첫 서비스 소개글 페이지에 띄울 profileFeedList,recruitingFeedList
+    public UserDTO.UserRes6 firstPage() {
+        return userService.firstPage();
+    }
+
+
 
 }

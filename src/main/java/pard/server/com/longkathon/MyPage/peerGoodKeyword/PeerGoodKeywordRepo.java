@@ -15,4 +15,5 @@ public interface PeerGoodKeywordRepo extends JpaRepository<PeerGoodKeyword, Long
 
     List<PeerGoodKeyword> findAllByUserIdAndKeywordIn(Long userId, Collection<String> keywords);
 
+    List<PeerGoodKeyword> findAllByUserId(Long userId);
 }

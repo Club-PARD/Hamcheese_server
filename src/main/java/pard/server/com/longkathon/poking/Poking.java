@@ -2,6 +2,8 @@ package pard.server.com.longkathon.poking;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @AllArgsConstructor
@@ -15,5 +17,9 @@ public class Poking {
     private Long sendId; // 찌르기를 보낸사람
 
     private Long receiveId; //찌르기를 받는사람
+
+    private Long recruitingId;
+
+    private LocalDateTime date;
 
 }

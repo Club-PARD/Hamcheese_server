@@ -20,8 +20,8 @@ public class PokingRes {
     @NoArgsConstructor
     public static class pokingRes2{ // 내가 받은 조각 조회 res
         private Long pokingId;
-        private Long recruitId;
-        private String senderId;
+        private Long recruitingId;
+        private Long senderId;
         private String senderName;
         private String date;
     }

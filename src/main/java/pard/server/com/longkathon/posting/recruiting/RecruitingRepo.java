@@ -2,6 +2,8 @@ package pard.server.com.longkathon.posting.recruiting;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import pard.server.com.longkathon.MyPage.user.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,20 @@ public interface RecruitingRepo extends JpaRepository<Recruiting, Long> {
     // userId로 조회 -> 내 모집글 확인
     List<Recruiting> findByUserIdOrderByRecruitingIdDesc(Long userId);
 
+    @Query(value = "SELECT * FROM recruiting ORDER BY RAND() LIMIT 3", nativeQuery = true)
+    List<Recruiting> findRandom3(); //첫 서비스 소개글 페이지에 띄울 유저 3명을 랜덤으로 가져온다.
+
+
+    List<Recruiting> findByUserIdInAndProjectTypeInAndTitleContainingOrderByRecruitingIdDesc(
+            List<Long> userIds, List<String> type, String title);
+
+    List<Recruiting> findByUserIdInAndTitleContainingOrderByRecruitingIdDesc(
+            List<Long> userIds, String title);
+
+    List<Recruiting> findByProjectTypeInAndTitleContainingOrderByRecruitingIdDesc(
+            List<String> type, String title);
+
+    List<Recruiting> findByTitleContainingOrderByRecruitingIdDesc(String title);
 
 }
 

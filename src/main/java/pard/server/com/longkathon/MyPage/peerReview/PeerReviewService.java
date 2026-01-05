@@ -4,10 +4,15 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import pard.server.com.longkathon.MyPage.peerBadKeyword.PeerBadKeyword;
 import pard.server.com.longkathon.MyPage.peerBadKeyword.PeerBadKeywordRepo;
+import pard.server.com.longkathon.MyPage.peerBadKeyword.PeerBadKeywordService;
 import pard.server.com.longkathon.MyPage.peerGoodKeyword.PeerGoodKeyword;
 import pard.server.com.longkathon.MyPage.peerGoodKeyword.PeerGoodKeywordRepo;
+import pard.server.com.longkathon.MyPage.peerGoodKeyword.PeerGoodKeywordSevice;
+import pard.server.com.longkathon.MyPage.user.UserDTO;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,6 +21,8 @@ public class PeerReviewService {
     private final PeerReviewRepo peerReviewRepo;
     private final PeerGoodKeywordRepo peerGoodKeywordRepo;
     private final PeerBadKeywordRepo peerBadKeywordRepo;
+    private final PeerGoodKeywordSevice peerGoodKeywordSevice;
+    private final PeerBadKeywordService peerBadKeywordService;
 
     public Map<String, Integer> goodKeyword (Long userId){
         List<PeerGoodKeyword> allList = peerGoodKeywordRepo.findAllByUserIdOrderByCountDesc(userId);
@@ -86,9 +93,11 @@ public class PeerReviewService {
 
     @Transactional
     public void createPeerReview(Long myId, Long userId, PeerReviewDTO.PeerReviewReq1 req) {
+        int ym = toYmInt(req.getStartDate());
 
         PeerReview peerReview = PeerReview.builder()
                 .startDate(req.getStartDate())
+                .startDateInt(ym)
                 .meetSpecific(req.getMeetSpecific())
                 .writerId(myId)
                 .userId(userId)
@@ -98,6 +107,19 @@ public class PeerReviewService {
 
         upsertGoodKeywords(userId, req.getGoodKeywordList());
         upsertBadKeywords(userId, req.getBadKeywordList());
+    }
+
+    public List<PeerReviewDTO.PeerReviewReq1> readRecentPeerReview(Long userId) {
+        List<PeerReview> recentList = peerReviewRepo.findAllByUserIdOrderByStartDateIntDesc(userId);
+
+        return recentList.stream().map(pr ->
+                PeerReviewDTO.PeerReviewReq1.builder()
+                        .startDate(pr.getStartDate())
+                        .meetSpecific(pr.getMeetSpecific())
+                        .goodKeywordList(peerGoodKeywordSevice.readKeyword(userId))
+                        .badKeywordList(peerBadKeywordService.readKeyword(userId))
+                        .build()).toList();
+
     }
 
     private void upsertGoodKeywords(Long userId, List<String> keywords) {
@@ -180,5 +202,37 @@ public class PeerReviewService {
 
         peerBadKeywordRepo.saveAll(toSave);
     }
+
+
+    private int toYmInt(String raw) {
+        if (raw == null || raw.isBlank()) return 0;
+
+        String s = raw.trim();
+
+        // 1) "202501" 같은 6자리
+        if (s.matches("^\\d{6}$")) {
+            return Integer.parseInt(s);
+        }
+
+        // 2) "2025-01", "2025.1", "2025/01", "2025 1" 등
+        Pattern p = Pattern.compile("^(\\d{4})\\D*(\\d{1,2}).*$");
+        Matcher m = p.matcher(s);
+        if (m.matches()) {
+            int year = Integer.parseInt(m.group(1));
+            int month = Integer.parseInt(m.group(2));
+            if (month < 1) month = 1;
+            if (month > 12) month = 12;
+            return year * 100 + month;
+        }
+
+        // 파싱 실패 시 맨 뒤 숫자라도 시도(안전장치)
+        String digits = s.replaceAll("\\D", "");
+        if (digits.length() >= 6) {
+            return Integer.parseInt(digits.substring(0, 6));
+        }
+
+        return 0;
+    }
+
 
 }

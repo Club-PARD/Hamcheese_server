@@ -15,5 +15,4 @@ public class PeerReviewController {
         peerReviewService.createPeerReview(myId, userId, peerReviewReq);
         return ResponseEntity.ok().build();
     }
-
 }

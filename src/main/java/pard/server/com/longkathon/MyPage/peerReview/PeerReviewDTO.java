@@ -22,4 +22,4 @@ public class PeerReviewDTO {
         @Builder.Default
         private List<String> badKeywordList = new ArrayList<>();
     }
-    }
+}

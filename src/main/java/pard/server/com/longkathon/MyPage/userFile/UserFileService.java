@@ -1,8 +1,7 @@
 package pard.server.com.longkathon.MyPage.userFile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 import pard.server.com.longkathon.s3.AwsS3Service;
 
 @Service
@@ -35,6 +34,12 @@ public class UserFileService {
         String oldFileName = userFile.getFileName();   // <- 첫 조회 결과 사용
         userFileRepo.deleteAllByUserId(userId);
         awsS3Service.deleteFile(oldFileName);
+    }
+
+    @Transactional
+    public void deleteImageFile(Long userId) {
+        awsS3Service.deleteFile(userFileRepo.findByUserId(userId).getFileName());
+        userFileRepo.deleteByUserId(userId);
     }
 
 }

@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pard.server.com.longkathon.MyPage.user.User;
 import pard.server.com.longkathon.MyPage.user.UserRepo;
+import pard.server.com.longkathon.MyPage.userFile.UserFileRepo;
+import pard.server.com.longkathon.MyPage.userFile.UserFileService;
 import pard.server.com.longkathon.posting.myKeyword.MyKeyword;
 import pard.server.com.longkathon.posting.myKeyword.MyKeywordRepo;
 
@@ -21,6 +23,8 @@ public class RecruitingService {
     private final RecruitingRepo recruitingRepo;
     private final MyKeywordRepo myKeywordRepo;
     private final UserRepo userRepo;
+    private final UserFileRepo userFileRepo;
+    private final UserFileService userFileService;
 
 
     private String formatRecruitingDate(LocalDateTime createdAt) {
@@ -138,6 +142,10 @@ public class RecruitingService {
                 .context(recruiting.getContext())
                 .myKeyword(myKeywordList)
                 .date(dateStr)
+                .studentId(userRepo.findById(recruiting.getUserId()).get().getStudentId())
+                .firstMajor(userRepo.findById(recruiting.getUserId()).get().getFirstMajor())
+                .secondMajor(userRepo.findById(recruiting.getUserId()).get().getSecondMajor())
+                .imageUrl(userFileService.getURL(recruiting.getUserId()))
                 .postingList(recentPosts)
                 .canEdit(canEdit)
                 .build();
@@ -145,54 +153,56 @@ public class RecruitingService {
 
 
     @Transactional
-    public List<RecruitingDTO.RecruitingRes3> filter( // 모집글 필터 적용
-                                                      List<String> type,
-                                                      List<String> departments,
-                                                      String name
+    public List<RecruitingDTO.RecruitingRes3> filter(
+            List<String> type,
+            List<String> departments,
+            String title
     ) {
         boolean hasType = type != null && !type.isEmpty();
         boolean hasDept = departments != null && !departments.isEmpty();
-        boolean hasName = name != null && !name.isBlank();
+        boolean hasTitle = title != null && !title.isBlank();
 
         List<Recruiting> recruitings;
 
-        // 1) 부서/이름 조건이 있으면 -> userIds 먼저 뽑는다
-        if (hasDept || hasName) {
-            List<Long> userIds;
-
-            if (hasDept && hasName) {
-                userIds = userRepo.findByDepartmentInAndNameContaining(departments, name)
-                        .stream().map(User::getUserId).toList();
-            } else if (hasDept) {
-                userIds = userRepo.findByDepartmentIn(departments)
-                        .stream().map(User::getUserId).toList();
-            } else {
-                userIds = userRepo.findByNameContaining(name)
-                        .stream().map(User::getUserId).toList();
-            }
+        // 1) 학부 조건이 있으면 -> userIds 먼저 뽑는다
+        if (hasDept) {
+            List<Long> userIds = userRepo.findByDepartmentIn(departments)
+                    .stream().map(User::getUserId).toList();
 
             if (userIds.isEmpty()) return List.of();
 
-            if (hasType) {
+            if (hasType && hasTitle) {
+                recruitings = recruitingRepo
+                        .findByUserIdInAndProjectTypeInAndTitleContainingOrderByRecruitingIdDesc(userIds, type, title);
+            } else if (hasType) {
                 recruitings = recruitingRepo
                         .findByUserIdInAndProjectTypeInOrderByRecruitingIdDesc(userIds, type);
+            } else if (hasTitle) {
+                recruitings = recruitingRepo
+                        .findByUserIdInAndTitleContainingOrderByRecruitingIdDesc(userIds, title);
             } else {
                 recruitings = recruitingRepo
                         .findByUserIdInOrderByRecruitingIdDesc(userIds);
             }
 
         } else {
-            // 2) 부서/이름 조건이 없을 때
-            if (hasType) {
+            // 2) 학부 조건이 없을 때
+            if (hasType && hasTitle) {
+                recruitings = recruitingRepo
+                        .findByProjectTypeInAndTitleContainingOrderByRecruitingIdDesc(type, title);
+            } else if (hasType) {
                 recruitings = recruitingRepo
                         .findByProjectTypeInOrderByRecruitingIdDesc(type);
+            } else if (hasTitle) {
+                recruitings = recruitingRepo
+                        .findByTitleContainingOrderByRecruitingIdDesc(title);
             } else {
                 recruitings = recruitingRepo
                         .findAllByOrderByRecruitingIdDesc();
             }
         }
 
-        // 3) 명세서(RecruitingRes3) 응답으로 변환 (date 포함!)
+        // 3) DTO 변환 (기존 로직 그대로)
         return recruitings.stream()
                 .map(r -> {
                     String writerName = userRepo.findById(r.getUserId())
@@ -226,6 +236,7 @@ public class RecruitingService {
 
 
 
+
     @Transactional
     public List<RecruitingDTO.RecruitingRes4> viewRecruitingMine(Long myId) { // 내 모집글 조회
         List<Recruiting> recruitings = recruitingRepo.findByUserIdOrderByRecruitingIdDesc(myId);
@@ -245,6 +256,7 @@ public class RecruitingService {
                     String dateStr = r.getDate() == null ? null : r.getDate().toString();
 
                     return RecruitingDTO.RecruitingRes4.builder()
+                            .recruitingId(r.getRecruitingId())
                             .name(writerName)
                             .projectType(r.getProjectType())
                             .projectSpecific(r.getProjectSpecific())
@@ -298,7 +310,7 @@ public class RecruitingService {
                         .build()
         );
 
-        List<String> keywords = normalizeKeywords(req.getKeyword());
+        List<String> keywords = normalizeKeywords(req.getMyKeyword());
         for (String kw : keywords) {
             myKeywordRepo.save(MyKeyword.builder()
                     .recruitingId(savedRecruiting.getRecruitingId())

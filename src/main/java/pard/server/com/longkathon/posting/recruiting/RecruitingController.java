@@ -42,7 +42,6 @@ public class RecruitingController {
 
     @PostMapping("/createPost/{userId}")
     public ResponseEntity<Void> createPost(@PathVariable Long userId, @RequestBody RecruitingDTO.RecruitingReq2 req) {
-
         recruitingService.createRecruiting(userId, req);
         return ResponseEntity.ok().build();
     }
@@ -65,7 +64,6 @@ public class RecruitingController {
         recruitingService.deleteRecruiting(recruitingId, myId);
         return ResponseEntity.ok().build();
     }
-
 
 
 }

@@ -4,7 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pard.server.com.longkathon.MyPage.activity.ActivityDTO;
+import pard.server.com.longkathon.MyPage.peerReview.PeerReviewDTO;
 import pard.server.com.longkathon.poking.PokingRes;
+import pard.server.com.longkathon.posting.recruiting.RecruitingDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +49,9 @@ public class UserDTO {
         @Builder.Default
         private Map<String, Integer> peerBadKeyword = new HashMap<>();
         private int badKeywordCount; //유저가 받은 부정 키워드 총 개수
+
+        @Builder.Default //동료평가 최신순으로 담은 리스트
+        private List<PeerReviewDTO.PeerReviewReq1> peerReviewRecent = new ArrayList<>();
     }
 
     @Builder
@@ -122,6 +127,16 @@ public class UserDTO {
         private String imageUrl;
     }
 
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserRes6{ //첫 서비스 소개글 페이지에 띄울 profileFeedList,recruitingFeedList
+        @Builder.Default
+        private List<UserRes5> profileFeedList = new ArrayList<>();
+        @Builder.Default
+        private List<RecruitingDTO.RecruitingRes5> recruitingFeedList = new ArrayList<>();
+    }
 
     @Builder
     @Getter
@@ -152,4 +167,6 @@ public class UserDTO {
 
         private String name; //이름 검색
     }
+
+
 }

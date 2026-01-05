@@ -15,4 +15,5 @@ public interface PeerBadKeywordRepo extends JpaRepository<PeerBadKeyword, Long>{
 
     List<PeerBadKeyword> findAllByUserIdAndKeywordIn(Long userId, Collection<String> keywords);
 
+    List<PeerBadKeyword> findAllByUserId(Long userId);
 }

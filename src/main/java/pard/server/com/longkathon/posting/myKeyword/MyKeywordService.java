@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pard.server.com.longkathon.posting.recruiting.Recruiting;
 import pard.server.com.longkathon.posting.recruiting.RecruitingRepo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,5 +57,14 @@ public class MyKeywordService {
         // 기존 키워드 삭제 후 재저장
         myKeywordRepo.deleteAllByRecruitingId(recruitingId);
         saveKeywords(recruitingId, newKeywords);
+    }
+
+    public List<String> readKeywords(Long recruitingId) { //해당 구인글에 속한 키워드들의 리스트를 리턴
+        List<MyKeyword> keywordList = myKeywordRepo.findAllByRecruitingId(recruitingId);
+        List<String> keywords = keywordList.stream()
+                .map(MyKeyword::getKeyword)   // String keyword 필드만 추출
+                .toList();
+
+        return keywords;
     }
 }

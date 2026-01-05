@@ -35,7 +35,7 @@ public class RecruitingDTO {
         private String title;
         private String context;
         @Builder.Default
-        private List<String> keyword = new ArrayList<>();
+        private List<String> myKeyword = new ArrayList<>();
     }
 
     @Builder @Getter @AllArgsConstructor @NoArgsConstructor
@@ -52,8 +52,6 @@ public class RecruitingDTO {
     }
 
 
-
-
     @Builder
     @Getter
     @AllArgsConstructor
@@ -66,8 +64,6 @@ public class RecruitingDTO {
         private int recruitPeople;//모집인원
         private String title;//제목
         private String date;
-
-
     }
     @Builder
     @Getter
@@ -103,6 +99,10 @@ public class RecruitingDTO {
         private int recruitPeople;
         private String title;
         private String context;
+        private String studentId;
+        private String firstMajor;
+        private String secondMajor;
+        private String imageUrl;
         @Builder.Default
         private List<String> myKeyword = new ArrayList<>();
         private String date;
@@ -136,6 +136,7 @@ public class RecruitingDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class RecruitingRes4 { // 내가 작성한 모집글 조회
+        private Long recruitingId;
         private String name;
         private String projectType;
         private String projectSpecific;
@@ -148,6 +149,24 @@ public class RecruitingDTO {
         private List<String> myKeyword = new ArrayList<>();
         private String date;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RecruitingRes5 { //맨처음 서비스 소개 글에 띄울 모집글dto
+        private Long recruitingId;
+        private String name;
+        private String projectType;
+        private String projectSpecific;
+        private int classes;
+        private String topic;
+        private int totalPeople;
+        private int recruitPeople;
+        private String title;
+    }
+
+
 
 
 
