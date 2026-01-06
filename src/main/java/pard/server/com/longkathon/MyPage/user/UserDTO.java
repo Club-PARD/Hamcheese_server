@@ -127,6 +127,8 @@ public class UserDTO {
         private Map<String, Integer> peerGoodKeywords = new HashMap<>();
 
         private String imageUrl;
+
+        private int goodKeywordCount; //유저가 받은 긍정 키워드 총 개수
     }
 
     @Builder

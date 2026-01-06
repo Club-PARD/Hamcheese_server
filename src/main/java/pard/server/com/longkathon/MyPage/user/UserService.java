@@ -273,6 +273,7 @@ public class UserService {
                             .skillList(skills)
                             .peerGoodKeywords(goodKeywords)
                             .imageUrl(imageUrl)
+                            .goodKeywordCount(peerReviewService.goodKeywordCount(u.getUserId()))
                             .build();
                 })
                 .toList();
