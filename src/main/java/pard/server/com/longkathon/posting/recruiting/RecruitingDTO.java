@@ -28,7 +28,7 @@ public class RecruitingDTO {
     public static class RecruitingReq2 { // 모집하기 페이지 생성 req
         private String projectType;
         private String projectSpecific;
-        private int classes;
+        private String classes;
         private String topic;
         private int totalPeople;
         private int recruitPeople;
@@ -42,7 +42,7 @@ public class RecruitingDTO {
     public static class RecruitingPatchReq {
         private String projectType;
         private String projectSpecific;
-        private Integer classes;
+        private String classes;
         private String topic;
         private Integer totalPeople;
         private Integer recruitPeople;
@@ -74,7 +74,7 @@ public class RecruitingDTO {
         private String name;
         private String projectType;
         private String projectSpecific;// 구체적인 이름 (수업 이름)
-        private int classes;//분반
+        private String classes;//분반
         private String topic;//주제
         private int totalPeople;//전체인원
         private int recruitPeople;//모집인원
@@ -93,7 +93,7 @@ public class RecruitingDTO {
         private String name;
         private String projectType;
         private String projectSpecific;
-        private int classes;
+        private String classes;
         private String topic;
         private int totalPeople;
         private int recruitPeople;
@@ -120,7 +120,7 @@ public class RecruitingDTO {
         private String name;
         private String projectType;
         private String projectSpecific;// 구체적인 이름 (수업 이름)
-        private int classes;//분반
+        private String classes;//분반
         private String topic;//주제
         private int totalPeople;//전체인원
         private int recruitPeople;//모집인원
@@ -140,7 +140,7 @@ public class RecruitingDTO {
         private String name;
         private String projectType;
         private String projectSpecific;
-        private int classes;
+        private String classes;
         private String topic;
         private int totalPeople;
         private int recruitPeople;
@@ -159,7 +159,7 @@ public class RecruitingDTO {
         private String name;
         private String projectType;
         private String projectSpecific;
-        private int classes;
+        private String classes;
         private String topic;
         private int totalPeople;
         private int recruitPeople;

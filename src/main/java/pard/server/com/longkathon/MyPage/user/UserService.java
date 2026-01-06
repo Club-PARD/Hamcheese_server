@@ -166,6 +166,7 @@ public class UserService {
                 .goodKeywordCount(peerReviewService.goodKeywordCount(userId))
                 .peerBadKeyword(peerReviewService.BadKeyword(userId))
                 .badKeywordCount(peerReviewService.badKeywordCount(userId))
+                .peerReviewRecent(peerReviewService.readRecentPeerReview(userId))
                 .build();
     }
 

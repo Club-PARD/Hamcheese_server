@@ -21,7 +21,7 @@ public class Recruiting { //구인 글 포스팅
 
     private String projectSpecific;// 구체적인 이름 (수업 이름)
 
-    private int classes;//분반
+    private String classes;//분반
 
     private String topic;//주제
 

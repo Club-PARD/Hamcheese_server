@@ -2,12 +2,9 @@ package pard.server.com.longkathon.MyPage.peerReview;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
-import pard.server.com.longkathon.MyPage.peerBadKeyword.PeerBadKeyword;
-import pard.server.com.longkathon.MyPage.peerBadKeyword.PeerBadKeywordRepo;
-import pard.server.com.longkathon.MyPage.peerBadKeyword.PeerBadKeywordService;
-import pard.server.com.longkathon.MyPage.peerGoodKeyword.PeerGoodKeyword;
-import pard.server.com.longkathon.MyPage.peerGoodKeyword.PeerGoodKeywordRepo;
-import pard.server.com.longkathon.MyPage.peerGoodKeyword.PeerGoodKeywordSevice;
+import org.springframework.web.context.request.WebRequestInterceptor;
+import pard.server.com.longkathon.MyPage.peerBadKeyword.*;
+import pard.server.com.longkathon.MyPage.peerGoodKeyword.*;
 import pard.server.com.longkathon.MyPage.user.UserDTO;
 
 import java.util.*;
@@ -21,8 +18,11 @@ public class PeerReviewService {
     private final PeerReviewRepo peerReviewRepo;
     private final PeerGoodKeywordRepo peerGoodKeywordRepo;
     private final PeerBadKeywordRepo peerBadKeywordRepo;
-    private final PeerGoodKeywordSevice peerGoodKeywordSevice;
+    private final PeerGoodKeywordService peerGoodKeywordSevice;
     private final PeerBadKeywordService peerBadKeywordService;
+    private final PeerGoodKeyword2Repo peerGoodKeyword2Repo;
+    private final PeerBadKeyword2Repo peerBadKeyword2Repo;
+
 
     public Map<String, Integer> goodKeyword (Long userId){
         List<PeerGoodKeyword> allList = peerGoodKeywordRepo.findAllByUserIdOrderByCountDesc(userId);
@@ -105,8 +105,8 @@ public class PeerReviewService {
 
         peerReviewRepo.save(peerReview);
 
-        upsertGoodKeywords(userId, req.getGoodKeywordList());
-        upsertBadKeywords(userId, req.getBadKeywordList());
+        upsertGoodKeywords(userId, peerReview.getPeerReviewId(), req.getGoodKeywordList());
+        upsertBadKeywords(userId, peerReview.getPeerReviewId(), req.getBadKeywordList());
     }
 
     public List<PeerReviewDTO.PeerReviewReq1> readRecentPeerReview(Long userId) {
@@ -116,13 +116,12 @@ public class PeerReviewService {
                 PeerReviewDTO.PeerReviewReq1.builder()
                         .startDate(pr.getStartDate())
                         .meetSpecific(pr.getMeetSpecific())
-                        .goodKeywordList(peerGoodKeywordSevice.readKeyword(userId))
-                        .badKeywordList(peerBadKeywordService.readKeyword(userId))
+                        .goodKeywordList(peerGoodKeywordSevice.readKeyword(userId, pr.getPeerReviewId()))
+                        .badKeywordList(peerBadKeywordService.readKeyword(userId, pr.getPeerReviewId()))
                         .build()).toList();
-
     }
 
-    private void upsertGoodKeywords(Long userId, List<String> keywords) {
+    private void upsertGoodKeywords(Long userId, Long peerReviewId, List<String> keywords) {
         if (keywords == null || keywords.isEmpty()) return;
 
         // 1) 입력 정리 + 빈값 제거 + 같은 키워드 중복 횟수 집계
@@ -162,9 +161,25 @@ public class PeerReviewService {
         }
 
         peerGoodKeywordRepo.saveAll(toSave);
+
+        //
+        List<PeerGoodKeyword2> entity = new ArrayList<>();
+
+        keywords.forEach((String k) -> {   // 또는 keywords.forEach(k -> { ... })
+            if (k == null) return;
+            String keyword = k.trim();
+            if (keyword.isEmpty()) return;
+
+            entity.add(PeerGoodKeyword2.builder()
+                    .userId(userId)
+                    .peerReviewId(peerReviewId)
+                    .keyword(keyword)
+                    .build());
+        });
+        peerGoodKeyword2Repo.saveAll(entity);
     }
 
-    private void upsertBadKeywords(Long userId, List<String> keywords) {
+    private void upsertBadKeywords(Long userId, Long peerReviewId, List<String> keywords) {
         if (keywords == null || keywords.isEmpty()) return;
 
         Map<String, Long> freq = keywords.stream()
@@ -201,6 +216,22 @@ public class PeerReviewService {
         }
 
         peerBadKeywordRepo.saveAll(toSave);
+
+        List<PeerBadKeyword2> entity = new ArrayList<>();
+
+        keywords.forEach((String k) -> {   // 또는 keywords.forEach(k -> { ... })
+            if (k == null) return;
+            String keyword = k.trim();
+            if (keyword.isEmpty()) return;
+
+            entity.add(PeerBadKeyword2.builder()
+                    .userId(userId)
+                    .peerReviewId(peerReviewId)
+                    .keyword(keyword)
+                    .build());
+        });
+
+        peerBadKeyword2Repo.saveAll(entity);
     }
 
 
