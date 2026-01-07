@@ -364,6 +364,9 @@ public class RecruitingService {
     }
 
     public String readTitle(Long recruitingId) {
+        if (recruitingId == null) {
+            return null;
+        }
         Optional<Recruiting> recruiting = recruitingRepo.findById(recruitingId);
         return recruiting.get().getTitle();
     }

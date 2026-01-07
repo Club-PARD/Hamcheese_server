@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pard.server.com.longkathon.MyPage.user.User;
 import pard.server.com.longkathon.MyPage.user.UserRepo;
+import pard.server.com.longkathon.MyPage.userFile.UserFileService;
 import pard.server.com.longkathon.posting.recruiting.Recruiting;
 import pard.server.com.longkathon.posting.recruiting.RecruitingRepo;
 import pard.server.com.longkathon.posting.recruiting.RecruitingService;
@@ -12,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +24,7 @@ public class PokingService {
     private final UserRepo userRepo;
     private final RecruitingRepo recruitingRepo;
     private final RecruitingService recruitingService;
+    private final UserFileService userFileService;
 
     /**
      * UserDTO에서 사용: 특정 유저(받는 사람)가 받은 모든 찌르기를 DTO 리스트로 반환
@@ -53,9 +56,6 @@ public class PokingService {
      */
     @Transactional
     public PokingRes.pokingRes1 createPoking(Long recruitingId, Long myId) {
-        if (recruitingId.equals(myId)) {
-            throw new IllegalArgumentException("자기 자신을 찌를 수 없습니다.");
-        }
 
         // sender/receiver 존재 검증
         User sender = userRepo.findById(myId)
@@ -64,10 +64,6 @@ public class PokingService {
         userRepo.findById(recruitingId)
                 .orElseThrow(() -> new IllegalArgumentException("receiver user not found: " + recruitingId));
 
-        // 중복 찌르기 방지
-        if (pokingRepo.existsBySendIdAndRecruitingId(myId, recruitingId)) {
-            throw new IllegalStateException("이미 찌르기를 보냈습니다.");
-        }
 
         Poking saved = pokingRepo.save(
                 Poking.builder()
@@ -84,18 +80,12 @@ public class PokingService {
                 .build();
     }
 
-    @Transactional
+    @Transactional //유저 프로필에서 찌르기
     public PokingRes.pokingRes1 createPokingToUser(Long userId, Long myId) {
-        if (myId.equals(userId)) throw new IllegalArgumentException("자기 자신은 찌를 수 없습니다.");
-
         User receiver = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("receiver user not found: " + userId));
         User sender = userRepo.findById(myId)
                 .orElseThrow(() -> new IllegalArgumentException("sender user not found: " + myId));
-
-        if (pokingRepo.existsBySendIdAndReceiveIdAndRecruitingIdIsNull(myId, userId)) {
-            throw new IllegalStateException("이미 찌르기를 보냈습니다.");
-        }
 
         Poking saved = pokingRepo.save(Poking.builder()
                 .sendId(myId)
@@ -109,6 +99,89 @@ public class PokingService {
                 .name(sender.getName())
                 .build();
     }
+
+    @Transactional
+    public PokingRes.CanPokeRes canPokeProfile(Long userId, Long myId) {
+
+        // 1) 자기 자신
+        if (myId.equals(userId)) {
+            return PokingRes.CanPokeRes.builder()
+                    .canPoke(false)
+                    .reason("SELF")
+                    .build();
+        }
+
+        // 2) 유저 존재 확인
+        if (!userRepo.existsById(userId)) {
+            return PokingRes.CanPokeRes.builder()
+                    .canPoke(false)
+                    .reason("USER_NOT_FOUND")
+                    .build();
+        }
+        if (!userRepo.existsById(myId)) {
+            return PokingRes.CanPokeRes.builder()
+                    .canPoke(false)
+                    .reason("USER_NOT_FOUND")
+                    .build();
+        }
+
+        // 3) 이미 찌른 상태인지
+        boolean already = pokingRepo.existsBySendIdAndReceiveId(myId, userId);
+        if (already) {
+            return PokingRes.CanPokeRes.builder()
+                    .canPoke(false)
+                    .reason("ALREADY_POKED")
+                    .build();
+        }
+        // 4) 가능
+        return PokingRes.CanPokeRes.builder()
+                .canPoke(true)
+                .reason("OK")
+                .build();
+    }
+
+    @Transactional
+    public PokingRes.CanPokeRes canPokeRecruiting(Long recruitingId, Long myId) {
+        //게시글 id로 게시글 주인을 찾아서 그 사람과 내 id로 생성된 찌르기가 있는지 확인
+        Optional<Recruiting> recruiting = recruitingRepo.findById(recruitingId);
+        Long recId = recruiting.get().getUserId();
+        // 1) 자기 자신
+        if (myId.equals(recId)) {
+            return PokingRes.CanPokeRes.builder()
+                    .canPoke(false)
+                    .reason("SELF")
+                    .build();
+        }
+
+        // 2) 유저 존재 확인
+        if (!userRepo.existsById(recId)) {
+            return PokingRes.CanPokeRes.builder()
+                    .canPoke(false)
+                    .reason("USER_NOT_FOUND")
+                    .build();
+        }
+        if (!userRepo.existsById(myId)) {
+            return PokingRes.CanPokeRes.builder()
+                    .canPoke(false)
+                    .reason("USER_NOT_FOUND")
+                    .build();
+        }
+
+        // 3) 이미 찌른 상태인지
+        boolean already = pokingRepo.existsBySendIdAndReceiveId(myId, recId);
+        if (already) {
+            return PokingRes.CanPokeRes.builder()
+                    .canPoke(false)
+                    .reason("ALREADY_POKED")
+                    .build();
+        }
+        // 4) 가능
+        return PokingRes.CanPokeRes.builder()
+                .canPoke(true)
+                .reason("OK")
+                .build();
+    }
+
 
     private String toRelativeTime(LocalDateTime date) { // 시간 ~전 으로 표시
         if (date == null) return null;
@@ -150,14 +223,22 @@ public class PokingService {
                 .collect(Collectors.toMap(User::getUserId, User::getName));
 
         return list.stream()
-                .map(p -> PokingRes.pokingRes2.builder()
-                        .pokingId(p.getPokingId())
-                        .recruitingId(p.getRecruitingId())
-                        .senderId(p.getSendId())
-                        .senderName(senderNameById.getOrDefault(p.getSendId(), "Unknown"))
-                        .date(toRelativeTime(p.getDate()))
-                        .recruitingTitle(recruitingService.readTitle(p.getRecruitingId()))
-                        .build())
+                .map(p -> {
+                    String recruitingTitle = null;
+                    if (p.getRecruitingId() != null) {
+                        recruitingTitle = recruitingService.readTitle(p.getRecruitingId());
+                    }
+
+                    return PokingRes.pokingRes2.builder()
+                            .pokingId(p.getPokingId())
+                            .recruitingId(p.getRecruitingId())
+                            .senderId(p.getSendId())
+                            .senderName(senderNameById.getOrDefault(p.getSendId(), "Unknown"))
+                            .date(toRelativeTime(p.getDate()))
+                            .recruitingTitle(recruitingTitle)
+                            .imageUrl(userFileService.getURL(p.getSendId()))
+                            .build();
+                })
                 .toList();
     }
 

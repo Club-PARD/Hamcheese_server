@@ -20,6 +20,14 @@ public class Poking {
 
     private Long recruitingId;
 
+    @Column(updatable = false)
     private LocalDateTime date;
+
+    @PrePersist // 생성 시점으로 자동 설정
+    public void prePersist() {
+        if (this.date == null) {
+            this.date = LocalDateTime.now();
+        }
+    }
 
 }

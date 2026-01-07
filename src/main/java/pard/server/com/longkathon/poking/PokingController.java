@@ -9,7 +9,23 @@ import org.springframework.web.bind.annotation.*;
 public class PokingController {
     private final PokingService pokingService;
 
+    //찌르기 가능 여부 확인 (유저 프로필에서)
+    @GetMapping("/canInProfile/{userId}/{myId}") // 찌르기가 이미 존재하는지 여부
+    public ResponseEntity<PokingRes.CanPokeRes> canPokeProfile(
+            @PathVariable Long userId,
+            @PathVariable Long myId
+    ) {
+        return ResponseEntity.ok(pokingService.canPokeProfile(userId, myId));
+    }
 
+    //찌르기 가능 여부 확인 (모집글에서)
+    @GetMapping("/canInRecruiting/{recruitingId}/{myId}") // 찌르기가 이미 존재하는지 여부
+    public ResponseEntity<PokingRes.CanPokeRes> canPokeRecruiting(
+            @PathVariable Long recruitingId,
+            @PathVariable Long myId
+    ) {
+        return ResponseEntity.ok(pokingService.canPokeRecruiting(recruitingId, myId));
+    }
 
     // 찌르기 생성: sendId(보낸 사람), receiveId(받는 사람)
     @PostMapping("/{recruitingId}/{myId}")
@@ -36,4 +52,6 @@ public class PokingController {
         return ResponseEntity.ok().build();
     }
 
+
+    //찌르기 가능 여부 확인 (모집 글에서)
 }

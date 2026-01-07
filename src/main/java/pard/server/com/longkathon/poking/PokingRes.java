@@ -25,6 +25,16 @@ public class PokingRes {
         private String recruitingTitle;
         private String senderName;
         private String date;
+        private String imageUrl;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CanPokeRes {
+        private boolean canPoke;
+        private String reason; // OK / SELF / ALREADY_POKED / USER_NOT_FOUND
     }
 
 }
