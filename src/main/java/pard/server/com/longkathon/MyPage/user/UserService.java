@@ -183,6 +183,7 @@ public class UserService {
                         .introduction(introductionService.read(user.getUserId()))
                         .skillList(skillStackListService.read(user.getUserId()))
                         .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
+                        .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
                         .imageUrl(userFileService.getURL(user.getUserId()))
                         .build()).toList();
 

@@ -17,6 +17,6 @@ public interface UserRepo extends JpaRepository<User, Long> {
     // name 문자열이 "포함된" 유저들을 조회한다. (부분 검색)
     List<User> findByNameContaining(String name);
 
-    @Query(value = "SELECT * FROM user ORDER BY RAND() LIMIT 3", nativeQuery = true)
+    @Query(value = "SELECT * FROM user ORDER BY RAND() LIMIT 4", nativeQuery = true)
     List<User> findRandom3(); //첫 서비스 소개글 페이지에 띄울 유저 3명을 랜덤으로 가져온다.
 }

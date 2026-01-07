@@ -29,7 +29,7 @@ public interface RecruitingRepo extends JpaRepository<Recruiting, Long> {
     // userId로 조회 -> 내 모집글 확인
     List<Recruiting> findByUserIdOrderByRecruitingIdDesc(Long userId);
 
-    @Query(value = "SELECT * FROM recruiting ORDER BY RAND() LIMIT 3", nativeQuery = true)
+    @Query(value = "SELECT * FROM recruiting ORDER BY RAND() LIMIT 4", nativeQuery = true)
     List<Recruiting> findRandom3(); //첫 서비스 소개글 페이지에 띄울 유저 3명을 랜덤으로 가져온다.
 
 
