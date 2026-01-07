@@ -19,7 +19,8 @@ public class CorsConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:3000",
                 "http://127.0.0.1:3000",
-                "https://matecheck.vercel.app"
+                "https://matecheck.vercel.app",
+                "https://matecheck.co.kr"
                 // 나중에 프론트 배포 도메인 추가
         ));
 
