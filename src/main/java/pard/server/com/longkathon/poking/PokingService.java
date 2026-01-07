@@ -6,6 +6,7 @@ import pard.server.com.longkathon.MyPage.user.User;
 import pard.server.com.longkathon.MyPage.user.UserRepo;
 import pard.server.com.longkathon.posting.recruiting.Recruiting;
 import pard.server.com.longkathon.posting.recruiting.RecruitingRepo;
+import pard.server.com.longkathon.posting.recruiting.RecruitingService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class PokingService {
     private final PokingRepo pokingRepo;
     private final UserRepo userRepo;
     private final RecruitingRepo recruitingRepo;
+    private final RecruitingService recruitingService;
 
     /**
      * UserDTO에서 사용: 특정 유저(받는 사람)가 받은 모든 찌르기를 DTO 리스트로 반환
@@ -154,6 +156,7 @@ public class PokingService {
                         .senderId(p.getSendId())
                         .senderName(senderNameById.getOrDefault(p.getSendId(), "Unknown"))
                         .date(toRelativeTime(p.getDate()))
+                        .recruitingTitle(recruitingService.readTitle(p.getRecruitingId()))
                         .build())
                 .toList();
     }

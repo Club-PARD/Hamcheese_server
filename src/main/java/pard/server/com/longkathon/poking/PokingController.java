@@ -20,7 +20,7 @@ public class PokingController {
         return ResponseEntity.ok(pokingService.createPoking(recruitingId, myId));
     }
 
-    @GetMapping("/received/{myId}")
+    @GetMapping("/received/{myId}") //내가 받은 찌르기 목록
     public ResponseEntity<java.util.List<PokingRes.pokingRes2>> received(@PathVariable Long myId) {
         return ResponseEntity.ok(pokingService.received(myId));
     }

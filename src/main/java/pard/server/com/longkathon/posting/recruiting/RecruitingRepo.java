@@ -6,10 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import pard.server.com.longkathon.MyPage.user.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RecruitingRepo extends JpaRepository<Recruiting, Long> {
-
     // 전체 모집글 최신순
     List<Recruiting> findAllByOrderByRecruitingIdDesc();
 

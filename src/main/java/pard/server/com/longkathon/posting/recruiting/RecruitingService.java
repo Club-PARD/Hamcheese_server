@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -360,6 +361,11 @@ public class RecruitingService {
                         .build());
             }
         }
+    }
+
+    public String readTitle(Long recruitingId) {
+        Optional<Recruiting> recruiting = recruitingRepo.findById(recruitingId);
+        return recruiting.get().getTitle();
     }
 
 
