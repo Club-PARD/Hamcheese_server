@@ -1,6 +1,4 @@
 package pard.server.com.longkathon.posting.recruiting;
-
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,13 +8,13 @@ import pard.server.com.longkathon.MyPage.userFile.UserFileRepo;
 import pard.server.com.longkathon.MyPage.userFile.UserFileService;
 import pard.server.com.longkathon.posting.myKeyword.MyKeyword;
 import pard.server.com.longkathon.posting.myKeyword.MyKeywordRepo;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.time.ZoneId;
 
 @Service
 @RequiredArgsConstructor
@@ -27,21 +25,21 @@ public class RecruitingService {
     private final UserFileRepo userFileRepo;
     private final UserFileService userFileService;
 
+    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
 
     private String formatRecruitingDate(LocalDateTime createdAt) {
         if (createdAt == null) return null;
 
-        LocalDate today = LocalDate.now();
+        // createdAt을 'KST의 시각'으로 해석해서 비교하고 싶다면
+        LocalDate createdDateKst = createdAt.atZone(KST).toLocalDate();
+        LocalDate todayKst = LocalDate.now(KST);
 
-        if (createdAt.toLocalDate().isEqual(today)) {
-            // 오늘 → HH:mm
-            return createdAt.format(DateTimeFormatter.ofPattern("HH:mm"));
+        if (createdDateKst.isEqual(todayKst)) {
+            return createdAt.atZone(KST).format(DateTimeFormatter.ofPattern("HH:mm"));
         } else {
-            // 오늘 아님 → yyyy.MM.dd
-            return createdAt.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+            return createdAt.atZone(KST).format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         }
     }
-
 
     @Transactional
     public List<RecruitingDTO.RecruitingRes1> viewAllRecruiting() { // 모집 페이지 전체 조회

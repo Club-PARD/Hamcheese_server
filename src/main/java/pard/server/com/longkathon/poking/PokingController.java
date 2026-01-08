@@ -41,7 +41,7 @@ public class PokingController {
         return ResponseEntity.ok(pokingService.received(myId));
     }
 
-    @PostMapping("/user/{userId}/{myId}")
+    @PostMapping("/user/{userId}/{myId}") //프로필에서 찌르기
     public ResponseEntity<PokingRes.pokingRes1> createToUser(@PathVariable Long userId, @PathVariable Long myId) {
         return ResponseEntity.ok(pokingService.createPokingToUser(userId, myId));
     }

@@ -11,6 +11,7 @@ import pard.server.com.longkathon.posting.recruiting.RecruitingService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,16 +62,17 @@ public class PokingService {
         User sender = userRepo.findById(myId)
                 .orElseThrow(() -> new IllegalArgumentException("sender user not found: " + myId));
 
-        userRepo.findById(recruitingId)
+        recruitingRepo.findById(recruitingId)
                 .orElseThrow(() -> new IllegalArgumentException("receiver user not found: " + recruitingId));
 
+        Optional<Recruiting> recruiting = recruitingRepo.findById(recruitingId);
 
         Poking saved = pokingRepo.save(
                 Poking.builder()
                         .sendId(myId)
-                        .receiveId(recruitingId)
+                        .receiveId(recruiting.get().getUserId())
                         .recruitingId(recruitingId)
-                        .date(LocalDateTime.now())
+                        .date(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                         .build()
         );
 
@@ -91,7 +93,7 @@ public class PokingService {
                 .sendId(myId)
                 .receiveId(userId)
                 .recruitingId(null)
-                .date(LocalDateTime.now())
+                .date(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build());
 
         return PokingRes.pokingRes1.builder()
@@ -102,7 +104,6 @@ public class PokingService {
 
     @Transactional
     public PokingRes.CanPokeRes canPokeProfile(Long userId, Long myId) {
-
         // 1) 자기 자신
         if (myId.equals(userId)) {
             return PokingRes.CanPokeRes.builder()
@@ -192,25 +193,25 @@ public class PokingService {
         long seconds = d.getSeconds();
         if (seconds < 0) seconds = 0;
 
-        if (seconds < 60) return "방금 전";
+        if (seconds < 60) return "방금전";
 
         long minutes = seconds / 60;
-        if (minutes < 60) return minutes + "분 전";
+        if (minutes < 60) return minutes + "분전";
 
         long hours = minutes / 60;
-        if (hours < 24) return hours + "시간 전";
+        if (hours < 24) return hours + "시간전";
 
         long days = hours / 24;
-        if (days < 7) return days + "일 전";
+        if (days < 7) return days + "일전";
 
         long weeks = days / 7;
-        if (weeks < 5) return weeks + "주 전";
+        if (weeks < 5) return weeks + "주전";
 
         long months = days / 30;
-        if (months < 12) return months + "개월 전";
+        if (months < 12) return months + "개월전";
 
         long years = days / 365;
-        return years + "년 전";
+        return years + "년전";
     }
 
     @Transactional
