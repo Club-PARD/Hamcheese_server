@@ -10,6 +10,7 @@ import pard.server.com.longkathon.posting.myKeyword.MyKeyword;
 import pard.server.com.longkathon.posting.myKeyword.MyKeywordRepo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +27,8 @@ public class RecruitingService {
     private final UserFileService userFileService;
 
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+    private static final DateTimeFormatter KOREA_FMT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
 
     private String formatRecruitingDate(LocalDateTime createdAt) {
         if (createdAt == null) return null;
@@ -39,6 +42,15 @@ public class RecruitingService {
         } else {
             return createdAt.atZone(KST).format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         }
+    }
+
+    public String koreaTime(LocalDateTime createdAt) {
+        if (createdAt == null) return null;
+
+        // createdAt을 "UTC의 LocalDateTime"으로 해석 -> KST로 변환
+        return createdAt.atZone(ZoneOffset.UTC)
+                .withZoneSameInstant(KST)
+                .format(KOREA_FMT);
     }
 
     @Transactional

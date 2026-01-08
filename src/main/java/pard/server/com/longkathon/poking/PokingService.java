@@ -238,7 +238,7 @@ public class PokingService {
                             .recruitingId(p.getRecruitingId())
                             .senderId(p.getSendId())
                             .senderName(senderNameById.getOrDefault(p.getSendId(), "Unknown"))
-                            .date(toRelativeTime(p.getDate()))
+                            .date(recruitingService.koreaTime(p.getDate()))
                             .projectSpecific(projectSpecific)
                             .imageUrl(userFileService.getURL(p.getSendId()))
                             .build();
