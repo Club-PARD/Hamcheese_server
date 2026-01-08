@@ -74,7 +74,7 @@
 - 모집하기 작성 및 관리
 - 프로젝트 타입별 필터링 (수업, 졸작, 동아리, 학회, 대회)
 - 학부 및 이름 기반 검색
-- 키워드 태그 시스템 (최대 10개)
+- 가장 잘할 수 있는 키워드 태그 시스템 (최대 10개)
 
 </td>
 <td width="50%">
@@ -600,7 +600,7 @@ profileImage: [image file]
 <details>
 <summary><b>4. 모집 (Recruiting) API</b></summary>
 
-### 4.1 전체 모집글 조회
+### 4.1 전체 모집하기 조회
 
 **Endpoint:** `GET /recruiting/findAll`
 
@@ -623,7 +623,7 @@ profileImage: [image file]
 
 ---
 
-### 4.2 모집글 필터링 검색
+### 4.2 모집하기 필터링 검색
 
 **Endpoint:** `GET /recruiting/filter`
 
@@ -651,7 +651,7 @@ profileImage: [image file]
 
 ---
 
-### 4.3 내가 작성한 모집글 조회 (내가 쓴 글 탭)
+### 4.3 내가 작성한 모집하기 조회 (내가 쓴 글 탭)
 
 **Endpoint:** `GET /recruiting/{myId}`
 
@@ -674,7 +674,7 @@ profileImage: [image file]
 
 ---
 
-### 4.4.1 모집글 상세 조회
+### 4.4.1 모집하기 상세 조회
 
 **Endpoint:** `GET /recruiting/detail/{recruitingId}/{myId}`
 
@@ -715,7 +715,7 @@ profileImage: [image file]
 
 ---
 
-### 4.4.2 모집글 수정
+### 4.4.2 모집하기 수정
 
 **Endpoint:** `PATCH /recruiting/{recruitingId}/{myId}`
 
@@ -738,7 +738,7 @@ profileImage: [image file]
 
 ---
 
-### 4.4.3 모집글 삭제
+### 4.4.3 모집하기 삭제
 
 **Endpoint:** `DELETE /recruiting/{recruitingId}/{myId}`
 
@@ -746,7 +746,7 @@ profileImage: [image file]
 
 ---
 
-### 4.5 모집글 생성
+### 4.5 모집하기 생성
 
 **Endpoint:** `POST /recruiting/createPost/{userId}`
 
@@ -795,9 +795,9 @@ profileImage: [image file]
 </details>
 
 <details>
-<summary><b>6. 찌르기 (Poking) API</b></summary>
+<summary><b>6. mate check! (Poking) API</b></summary>
 
-### 6.1 모집글에서 찌르기 생성
+### 6.1 모집하기에서 mate check! 생성
 
 **Endpoint:** `POST /poking/{recruitingId}/{myId}`
 
@@ -805,19 +805,19 @@ profileImage: [image file]
 
 ---
 
-### 6.2 유저에게 찌르기 생성
+### 6.2 유저에게 mate check! 생성
 
 **Endpoint:** `POST /poking/user/{userId}/{myId}`
 
 **Path Parameters:**
-- `userId`: 찌르기를 **받는 사람(메이트)**
-- `myId`: 찌르기를 **보내는 사람(로그인 유저)**
+- `userId`: mate check!를 **받는 사람(메이트)**
+- `myId`: mate check!를 **보내는 사람(로그인 유저)**
 
 **Response:** `200 OK` (생성 완료)
 
 ---
 
-### 6.3 모집글에서 찌르기 가능 여부 조회
+### 6.3 모집하기에서 mate check! 가능 여부 조회
 
 **Endpoint:** `GET /poking/canInRecruiting/{recruitingId}/{myId}`
 
@@ -831,7 +831,7 @@ profileImage: [image file]
 
 ---
 
-### 6.4 유저 → 유저 찌르기 가능 여부 조회
+### 6.4 유저 → 유저 mate check! 가능 여부 조회
 
 **Endpoint:** `GET /poking/canInProfile/{userId}/{myId}`
 
@@ -845,7 +845,7 @@ profileImage: [image file]
 
 ---
 
-### 6.5 찌르기 조회 (내가 받은 찌르기 목록)
+### 6.5 mate check! 조회 (내가 받은 mate check! 목록)
 
 **Endpoint:** `GET /poking/received/{myId}`
 
@@ -866,7 +866,7 @@ profileImage: [image file]
 
 ---
 
-### 6.6 찌르기 삭제 (수락/거절 처리)
+### 6.6 mate check! 삭제 (수락/거절 처리)
 
 **Endpoint:** `DELETE /poking/{pokingId}`
 
@@ -890,15 +890,13 @@ profileImage: [image file]
 | **Recruiting** | 모집하기 | userId, projectType, classes, topic, totalPeople, recruitPeople, title, context, date |
 | **MyKeyword** | 모집하기 키워드 | recruitingId, keyword |
 | **PeerReview** | 동료평가 | writerId, userId, meetSpecific, startDate |
-| **PeerGoodKeyword** | 긍정 키워드 누적 | userId, keyword, count |
-| **PeerBadKeyword** | 부정 키워드 누적 | userId, keyword, count |
-| **PeerGoodKeyword2** | 긍정 키워드 상세 | userId, peerReviewId, keyword |
-| **PeerBadKeyword2** | 부정 키워드 상세 | userId, peerReviewId, keyword |
+| **PeerGoodKeyword** | 강점 키워드 누적 | userId, keyword, count |
+| **PeerBadKeyword** | 약점 키워드 누적 | userId, keyword, count |
+| **PeerGoodKeyword2** | 강점 키워드 상세 | userId, peerReviewId, keyword |
+| **PeerBadKeyword2** | 약점 키워드 상세 | userId, peerReviewId, keyword |
 | **Poking** | mate check! | sendId, receiveId, recruitingId, date |
 
 ---
-
-## 트러블슈팅 / 회고 / 아쉬운 점 / 개선 계획
 
 ### 트러블슈팅
 
@@ -965,6 +963,7 @@ profileImage: [image file]
 - **DB/도메인 리팩토링**
   - 변화가 잦은 도메인(키워드/리뷰/프로필 확장)에 대해 스키마 정책 정리
   - 인덱스/쿼리 튜닝 및 조회 API의 페이지네이션 도입
- 
-  > 라이선스: 이 프로젝트는 실습 목적으로 개발되었습니다..
+
+
+> 라이선스: 이 프로젝트는 실습 목적으로 개발되었습니다.
 
