@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import pard.server.com.longkathon.MyPage.user.User;
 import pard.server.com.longkathon.MyPage.user.UserRepo;
 import pard.server.com.longkathon.MyPage.userFile.UserFileService;
+import pard.server.com.longkathon.alarm.Alarm;
+import pard.server.com.longkathon.alarm.AlarmRepo;
 import pard.server.com.longkathon.posting.recruiting.Recruiting;
 import pard.server.com.longkathon.posting.recruiting.RecruitingRepo;
 import pard.server.com.longkathon.posting.recruiting.RecruitingService;
@@ -26,6 +28,7 @@ public class PokingService {
     private final RecruitingRepo recruitingRepo;
     private final RecruitingService recruitingService;
     private final UserFileService userFileService;
+    private final AlarmRepo alarmRepo;
 
     /**
      * UserDTO에서 사용: 특정 유저(받는 사람)가 받은 모든 찌르기를 DTO 리스트로 반환
@@ -243,8 +246,27 @@ public class PokingService {
                 .toList();
     }
 
-    @Transactional
-    public void delete(Long pokingId) {
+    @Transactional //삭제 할때 수락, 거절 여부에 따라 알림을 생성한다.
+    public void delete(Long pokingId, PokingReq pokingReq) {
+        Poking poking = pokingRepo.findById(pokingId).get(); //헤당 찌르기를 찾아서
+        User sender = userRepo.findById(poking.getReceiveId()).get(); // 찌르기를 받는 사람이 알림을 보내는사람이 된다.
+        User receiver = userRepo.findById(poking.getSendId()).get(); //찌르기를 보내는 사람이 알림을 받는 사람이된다.
+
+        if (pokingReq.isOk()){ // 수락이면
+            Alarm alarm = Alarm.builder()
+                    .senderId(sender.getUserId())
+                    .receiverId(receiver.getUserId())
+                    .ok(pokingReq.isOk())
+                    .build();
+            alarmRepo.save(alarm);
+        }else{
+            Alarm alarm = Alarm.builder()
+                    .senderId(sender.getUserId())
+                    .receiverId(receiver.getUserId())
+                    .ok(pokingReq.isOk())
+                    .build();
+            alarmRepo.save(alarm);
+        }
         pokingRepo.deleteById(pokingId);
     }
 }

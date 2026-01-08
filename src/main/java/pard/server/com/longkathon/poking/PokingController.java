@@ -47,8 +47,8 @@ public class PokingController {
     }
 
     @DeleteMapping("/{pokingId}")
-    public ResponseEntity<Void> delete(@PathVariable Long pokingId) {
-        pokingService.delete(pokingId);
+    public ResponseEntity<Void> delete(@PathVariable Long pokingId, @RequestBody PokingReq pokingReq) {
+        pokingService.delete(pokingId, pokingReq);
         return ResponseEntity.ok().build();
     }
 
