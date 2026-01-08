@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Getter
@@ -39,7 +40,7 @@ public class Recruiting { //구인 글 포스팅
     @PrePersist // 생성 시점으로 자동 설정
     public void prePersist() {
         if (this.date == null) {
-            this.date = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
+            this.date = LocalDateTime.now(ZoneId.of("Asia/Seoul")).truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
         }
     }
 
