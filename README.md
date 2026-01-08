@@ -888,7 +888,7 @@ profileImage: [image file]
 | **SkillStackList** | 강점 해시태그 | userId, skillName |
 | **Activity** | 활동 내역 | userId, year, title, link |
 | **Recruiting** | 모집하기 | userId, projectType, classes, topic, totalPeople, recruitPeople, title, context, date |
-| **MyKeyword** | 모집하기 키워드 | recruitingId, keyword |
+| **MyKeyword** | 가장 잘할 수 있는 키워드 | recruitingId, keyword |
 | **PeerReview** | 동료평가 | writerId, userId, meetSpecific, startDate |
 | **PeerGoodKeyword** | 강점 키워드 누적 | userId, keyword, count |
 | **PeerBadKeyword** | 약점 키워드 누적 | userId, keyword, count |
