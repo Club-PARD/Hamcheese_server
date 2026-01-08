@@ -366,7 +366,7 @@ public class RecruitingService {
             return null;
         }
         Optional<Recruiting> recruiting = recruitingRepo.findById(recruitingId);
-        return recruiting.get().getTitle();
+        return recruiting.get().getProjectSpecific();
     }
 
 

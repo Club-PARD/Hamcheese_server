@@ -228,9 +228,9 @@ public class PokingService {
 
         return list.stream()
                 .map(p -> {
-                    String recruitingTitle = null;
+                    String projectSpecific = null;
                     if (p.getRecruitingId() != null) {
-                        recruitingTitle = recruitingService.readTitle(p.getRecruitingId());
+                        projectSpecific = recruitingService.readTitle(p.getRecruitingId());
                     }
 
                     return PokingRes.pokingRes2.builder()
@@ -239,7 +239,7 @@ public class PokingService {
                             .senderId(p.getSendId())
                             .senderName(senderNameById.getOrDefault(p.getSendId(), "Unknown"))
                             .date(toRelativeTime(p.getDate()))
-                            .recruitingTitle(recruitingTitle)
+                            .projectSpecific(projectSpecific)
                             .imageUrl(userFileService.getURL(p.getSendId()))
                             .build();
                 })

@@ -22,7 +22,7 @@ public class PokingRes {
         private Long pokingId;
         private Long recruitingId;
         private Long senderId;
-        private String recruitingTitle;
+        private String projectSpecific;
         private String senderName;
         private String date;
         private String imageUrl;
