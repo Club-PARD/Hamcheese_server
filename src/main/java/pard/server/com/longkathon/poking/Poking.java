@@ -27,7 +27,8 @@ public class Poking {
     @PrePersist // 생성 시점으로 자동 설정
     public void prePersist() {
         if (this.date == null) {
-            this.date = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+            this.date = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
+                    .truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
         }
     }
 
