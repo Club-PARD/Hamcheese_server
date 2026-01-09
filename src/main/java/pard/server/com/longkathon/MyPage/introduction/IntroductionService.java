@@ -11,7 +11,7 @@ public class IntroductionService {
 
     @Transactional
     public void createOrUpdate (Long userId, String oneLine) {
-        Introduction intro = introductionRepo.findById(userId).orElse(null);
+        Introduction intro = introductionRepo.findByUserId(userId);
         if (intro == null) { //첫 소개글이면 생성하고
             Introduction introduction = Introduction.builder()
                     .userId(userId)
