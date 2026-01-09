@@ -1,4 +1,5 @@
 <div align="center">
+    <img src="src/main/resources/templates/logo.png" width="100%" style="display:inline-block; margin-right: 10px;"/></div>
 
 # 🤝 mate check
 
@@ -15,7 +16,21 @@
 
 ---
 
-</div>
+## 📌 자기소개 및 역할 분담
+
+  <img src="src/main/resources/templates/person1.png" width="45.3%"/> <img src="src/main/resources/templates/person2.png" width="45%"/>
+
+
+
+> ERD 및 API 명세서는 두 사람이 함께 진행하였습니다.
+
+| 이름    | 주요 담당 기능                                                                                              |
+|-------|-------------------------------------------------------------------------------------------------------|
+| 🔥이상헌 | - OAuth 기반 로그인<br>- 사용자 프로필 관리 관련 기능<br>- AWS S3 파일 업로드<br>- 동료평가 시스템                                 |
+| 🥷조귀호 | - mate check!(매칭 요청)<br>-팀원 모집 관련 기능|
+
+---
+
 
 ## 📌 프로젝트 정보
 
@@ -56,6 +71,92 @@
 ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-green?logo=swagger)
 ![AWS SDK](https://img.shields.io/badge/AWS-SDK-orange)
 
+---
+## 🌊 주요 플로우
+
+<details>
+  <summary><b>1. 메인 소개 페이지</b></summary>
+
+  <div>
+    <img src="src/main/resources/templates/mainPage1.png" width="100%"/>
+    <img src="src/main/resources/templates/mainPage2.png" width="100%"/>
+    <img src="src/main/resources/templates/mainPage3.png" width="100%"/>
+    <img src="src/main/resources/templates/mainPage4.png" width="100%"/>
+  </div>
+
+</details>
+
+---
+
+<details>
+  <summary><b>2. 로그인 / 회원가입</b></summary>
+
+  <div>
+    <img src="src/main/resources/templates/login1.png" width="100%"/>
+    <img src="src/main/resources/templates/login2.png" width="100%"/>
+    <img src="src/main/resources/templates/register.png" width="100%"/>
+  </div>
+
+</details>
+
+---
+
+<details>
+  <summary><b>3. 메이트 둘러보기 및 상세보기</b></summary>
+
+  <div>
+    <img src="src/main/resources/templates/mateViewAll.png" width="100%"/>
+    <img src="src/main/resources/templates/mateViewDetail1.png" width="100%"/>
+    <img src="src/main/resources/templates/mateViewDetail2.png" width="100%"/>
+  </div>
+
+</details>
+
+---
+
+<details>
+  <summary><b>4. 모집하기 둘러보기 및 상세보기</b></summary>
+
+  <div>
+    <img src="src/main/resources/templates/recruiting.png" width="100%"/>
+    <img src="src/main/resources/templates/recruitingDetail.png" width="100%"/>
+  </div>
+
+</details>
+
+---
+
+<details>
+  <summary><b>5. 모집하기 작성</b></summary>
+
+  <div>
+    <img src="src/main/resources/templates/recruitingWrite.png" width="100%"/>
+  </div>
+
+</details>
+
+---
+
+<details>
+  <summary><b>6. mate check</b></summary>
+
+  <div>
+    <img src="src/main/resources/templates/mateCheckSend.png" width="100%"/>
+    <img src="src/main/resources/templates/mateCheckReceive.png" width="100%"/>
+  </div>
+
+</details>
+
+---
+
+<details>
+  <summary><b>7. mate check 수락 시 채팅</b></summary>
+
+  <div>
+    <img src="src/main/resources/templates/chatting.png" width="100%"/>
+  </div>
+
+</details>
 ---
 
 ## ✨ 핵심 기능
@@ -920,7 +1021,7 @@ profileImage: [image file]
 
 ```json
 {
-  "ok": "boolean" // true: 수락, false: 거절
+  "ok": "boolean"
 }
 ```
 
@@ -972,56 +1073,42 @@ profileImage: [image file]
 ## 🗄️ ERD
 
 ### 주요 테이블 구조
+<div align="center">
+  <img src="src/main/resources/templates/logo.png" width="100%" alt="mate check logo"/>
+</div>
 
-| 테이블                  | 설명             | 주요 필드                                                                                 |
-| -------------------- | -------------- | ------------------------------------------------------------------------------------- |
-| **User**             | 사용자 기본 정보      | 이름, 학번, 학년, 학부, 전공, 학점, 이메일, socialId                                                 |
-| **UserFile**         | 프로필 이미지        | userId, fileName                                                                      |
-| **Introduction**     | 한줄소개           | userId, oneLine                                                                       |
-| **SkillStackList**   | 강점 해시태그        | userId, skillName                                                                     |
-| **Activity**         | 활동 내역          | userId, year, title, link                                                             |
-| **Recruiting**       | 모집하기           | userId, projectType, classes, topic, totalPeople, recruitPeople, title, context, date |
-| **MyKeyword**        | 가장 잘할 수 있는 키워드 | recruitingId, keyword                                                                 |
-| **PeerReview**       | 동료평가           | writerId, userId, meetSpecific, startDate                                             |
-| **PeerGoodKeyword**  | 강점 키워드 누적      | userId, keyword, count                                                                |
-| **PeerBadKeyword**   | 약점 키워드 누적      | userId, keyword, count                                                                |
-| **PeerGoodKeyword2** | 강점 키워드 상세      | userId, peerReviewId, keyword                                                         |
-| **PeerBadKeyword2**  | 약점 키워드 상세      | userId, peerReviewId, keyword                                                         |
-| **Poking**           | mate check!    | sendId, receiveId, recruitingId, date                                                 |
-| **Alarm**            | 알림             | alarmId, userId, senderName, ok                                                       |
 
----
 
 ### 트러블슈팅
 
 * **Google 로그인 방식 정리**
 
-    * 문제: “일반 로그인(JWT/세션)”과 달리 `idToken` 기반 흐름이라 팀 내에서 인증/인가 범위가 헷갈림
-    * 대응: `POST /auth/google/exists`에서 `idToken → (email/socialId) 추출 → exists/myId 반환` 흐름으로 문서화
+  * 문제: “일반 로그인(JWT/세션)”과 달리 `idToken` 기반 흐름이라 팀 내에서 인증/인가 범위가 헷갈림
+  * 대응: `POST /auth/google/exists`에서 `idToken → (email/socialId) 추출 → exists/myId 반환` 흐름으로 문서화
 
 
 * **EC2 수동 배포로 인한 설정 불일치**
 
-    * 문제: 로컬과 EC2 환경변수/설정 파일 차이로 실행 오류가 발생하기 쉬움
-    * 대응: `application.yml` 분리 + 환경변수 목록을 정리하고, 배포 시 체크리스트(필수 env, DB 연결, S3 권한)를 만들어 공유
+  * 문제: 로컬과 EC2 환경변수/설정 파일 차이로 실행 오류가 발생하기 쉬움
+  * 대응: `application.yml` 분리 + 환경변수 목록을 정리하고, 배포 시 체크리스트(필수 env, DB 연결, S3 권한)를 만들어 공유
 
 
 * **이미지 업로드(멀티파트) 디버깅**
 
-    * 문제: `multipart/form-data`에서 `profileImage` + `data(JSON string)`를 함께 전송할 때 키 이름/Content-Type 실수로 400/415 발생
-    * 대응: 프론트 요청 예시(FormData)와 서버 요구 파라미터 이름을 명세에 고정, Postman으로 먼저 검증 후 프론트 적용
+  * 문제: `multipart/form-data`에서 `profileImage` + `data(JSON string)`를 함께 전송할 때 키 이름/Content-Type 실수로 400/415 발생
+  * 대응: 프론트 요청 예시(FormData)와 서버 요구 파라미터 이름을 명세에 고정, Postman으로 먼저 검증 후 프론트 적용
 
 
 * **ERD/도메인 설계 변경 비용**
 
-    * 문제: 화면/API 변경이 생길 때 ERD가 같이 흔들리며 수정 비용이 커짐
-    * 대응: 키워드/리뷰처럼 변화가 잦은 영역은 “정규화 vs 집계 테이블” 기준을 세우고, 누적 집계(GOOD/BAD) 테이블로 조회 성능을 확보
+  * 문제: 화면/API 변경이 생길 때 ERD가 같이 흔들리며 수정 비용이 커짐
+  * 대응: 키워드/리뷰처럼 변화가 잦은 영역은 “정규화 vs 집계 테이블” 기준을 세우고, 누적 집계(GOOD/BAD) 테이블로 조회 성능을 확보
 
 
 * **서버 시간대(UTC)로 인해 생성 시간이 한국 시간과 다르게 저장됨**
-    - 문제: AWS 서버 리전/기본 타임존 설정 영향으로 `LocalDateTime.now()` 기준 시간이 한국 시간(KST)과 어긋나, 모집글/찌르기 생성 시간이 프론트에서 기대한 시간과 다르게 보임
-    - 원인: 서버 환경(예: UTC 또는 다른 타임존) 기준으로 애플리케이션 시간이 생성됨
-    - 대응: `Recruiting`, `Poking` 엔티티에 `@PrePersist`를 추가해 저장 직전에 KST(Asia/Seoul) 기준으로 `date`를 세팅
+  - 문제: AWS 서버 리전/기본 타임존 설정 영향으로 `LocalDateTime.now()` 기준 시간이 한국 시간(KST)과 어긋나, 모집글/찌르기 생성 시간이 프론트에서 기대한 시간과 다르게 보임
+  - 원인: 서버 환경(예: UTC 또는 다른 타임존) 기준으로 애플리케이션 시간이 생성됨
+  - 대응: `Recruiting`, `Poking` 엔티티에 `@PrePersist`를 추가해 저장 직전에 KST(Asia/Seoul) 기준으로 `date`를 세팅
 
   **Recruiting**
     ```java
@@ -1055,13 +1142,13 @@ profileImage: [image file]
 
 * **3주 내 “기능 완성 + 배포”까지 도달**
 
-    * OAuth 기반 인증 흐름을 구현하고, Nginx/HTTPS를 포함한 실서비스 형태로 끝까지 연결
+  * OAuth 기반 인증 흐름을 구현하고, Nginx/HTTPS를 포함한 실서비스 형태로 끝까지 연결
 * **조회 성능을 고려한 설계 시도**
 
-    * 동료평가 키워드 Top3/Count 요구사항을 누적 집계 테이블로 분리해 조회를 단순화
+  * 동료평가 키워드 Top3/Count 요구사항을 누적 집계 테이블로 분리해 조회를 단순화
 * **API 명세 중심 협업**
 
-    * 화면 흐름(동일 유저 여부 판별, canEdit 등)을 명세에 반영해 프론트와 합의점을 만들고 개발 진행
+  * 화면 흐름(동일 유저 여부 판별, canEdit 등)을 명세에 반영해 프론트와 합의점을 만들고 개발 진행
 
 ---
 
@@ -1069,27 +1156,25 @@ profileImage: [image file]
 
 * **인증 고도화**
 
-    * `idToken`은 “최초 로그인 검증”에만 사용
-    * 서버가 `access/refresh JWT`를 발급하고, 권한/만료/재발급 흐름을 표준화
+  * `idToken`은 “최초 로그인 검증”에만 사용
+  * 서버가 `access/refresh JWT`를 발급하고, 권한/만료/재발급 흐름을 표준화
 
 * **Docker 기반 배포 전환**
 
-    * Spring + MySQL(+Nginx) 컨테이너화로 실행 환경을 고정
-    * `docker compose`로 로컬/서버 환경을 동일하게 맞추기
+  * Spring + MySQL(+Nginx) 컨테이너화로 실행 환경을 고정
+  * `docker compose`로 로컬/서버 환경을 동일하게 맞추기
 
 * **CI/CD 도입**
 
-    * GitHub Actions로 빌드/테스트 후 EC2 배포 자동화
-    * 배포 실패 시 롤백 또는 이전 버전 유지 전략 수립
+  * GitHub Actions로 빌드/테스트 후 EC2 배포 자동화
+  * 배포 실패 시 롤백 또는 이전 버전 유지 전략 수립
 
 * **운영 기본기 추가**
 
-    * 로그(구조화 로그), 모니터링(헬스체크/메트릭) 적용
-    * 프로세스 매니저(systemd) 또는 컨테이너 재시작 정책으로 안정성 확보
+  * 로그(구조화 로그), 모니터링(헬스체크/메트릭) 적용
+  * 프로세스 매니저(systemd) 또는 컨테이너 재시작 정책으로 안정성 확보
 
 * **DB/도메인 리팩토링**
 
-    * 변화가 잦은 도메인(키워드/리뷰/프로필 확장)에 대해 스키마 정책 정리
-    * 인덱스/쿼리 튜닝 및 조회 API의 페이지네이션 도입
-
-> 라이선스: 이 프로젝트는 실습 목적으로 개발되었습니다.
+  * 변화가 잦은 도메인(키워드/리뷰/프로필 확장)에 대해 스키마 정책 정리
+  * 인덱스/쿼리 튜닝 및 조회 API의 페이지네이션 도입
