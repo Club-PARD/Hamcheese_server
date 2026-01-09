@@ -1074,7 +1074,7 @@ profileImage: [image file]
 
 ### 주요 테이블 구조
 <div align="center">
-  <img src="src/main/resources/templates/logo.png" width="100%" alt="mate check logo"/>
+  <img src="src/main/resources/templates/ERD.png" width="100%" alt="mate check logo"/>
 </div>
 
 
