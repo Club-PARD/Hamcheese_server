@@ -24,7 +24,7 @@ public class IntroductionService {
     }
 
     public String read (Long userId) { //userDTO 생성에 사용된다.
-        Introduction introduction = introductionRepo.findById(userId).orElse(null);
+        Introduction introduction = introductionRepo.findByUserId(userId);
         if (introduction == null) {
             return null;
         }else{
