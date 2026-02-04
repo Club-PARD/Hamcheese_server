@@ -9,4 +9,4 @@ public class AuthorizeUserId {
                 .getAuthentication().getPrincipal();
         return p.userId();
     }
-}
+}//test
