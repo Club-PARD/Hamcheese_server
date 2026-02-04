@@ -19,4 +19,6 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT * FROM user ORDER BY RAND() LIMIT 4", nativeQuery = true)
     List<User> findRandom3(); //첫 서비스 소개글 페이지에 띄울 유저 3명을 랜덤으로 가져온다.
+
+    Optional<User> findByEmail(String email);
 }

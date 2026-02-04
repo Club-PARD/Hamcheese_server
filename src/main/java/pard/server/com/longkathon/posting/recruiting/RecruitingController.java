@@ -2,6 +2,7 @@ package pard.server.com.longkathon.posting.recruiting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pard.server.com.longkathon.MyPage.user.AuthorizeUserId;
 
 import java.util.List;
 
@@ -17,11 +18,9 @@ public class RecruitingController {
         return ResponseEntity.ok(recruitingService.viewAllRecruiting());
     }
 
-    @GetMapping("/detail/{recruitingId}/{myId}") // 모집글 상세 조회
-    public ResponseEntity<RecruitingDTO.RecruitingRes2> findById(
-            @PathVariable Long recruitingId,
-            @PathVariable Long myId
-    ) {
+    @GetMapping("/{recruitingId}") // 모집글 상세 조회
+    public ResponseEntity<RecruitingDTO.RecruitingRes2> findById(@PathVariable Long recruitingId) {
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
         return ResponseEntity.ok(recruitingService.viewRecruitingDetail(recruitingId, myId));
     }
 
@@ -35,32 +34,29 @@ public class RecruitingController {
     }
 
 
-    @GetMapping("/{myId}") // 내 모집글 조회
-    public ResponseEntity<List<RecruitingDTO.RecruitingRes4>> viewMyRecruitings(@PathVariable Long myId) {
+    @GetMapping("") // 내 모집글 조회
+    public ResponseEntity<List<RecruitingDTO.RecruitingRes4>> viewMyRecruitings() {
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
         return ResponseEntity.ok(recruitingService.viewRecruitingMine(myId));
     }
 
-    @PostMapping("/createPost/{userId}")
-    public ResponseEntity<Void> createPost(@PathVariable Long userId, @RequestBody RecruitingDTO.RecruitingReq2 req) {
-        recruitingService.createRecruiting(userId, req);
+    @PostMapping("")
+    public ResponseEntity<Void> createPost(@RequestBody RecruitingDTO.RecruitingReq2 req) {
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
+        recruitingService.createRecruiting(myId, req);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{recruitingId}/{myId}") // 모집글 수정 (부분 수정 PATCH)
-    public ResponseEntity<Void> updateRecruiting(
-            @PathVariable Long recruitingId,
-            @PathVariable Long myId,
-            @RequestBody RecruitingDTO.RecruitingPatchReq req
-    ) {
+    @PatchMapping("/{recruitingId}") // 모집글 수정 (부분 수정 PATCH)
+    public ResponseEntity<Void> updateRecruiting(@PathVariable Long recruitingId, @RequestBody RecruitingDTO.RecruitingPatchReq req) {
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
         recruitingService.updateRecruiting(recruitingId, myId, req);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{recruitingId}/{myId}") // 모집글 삭제
-    public ResponseEntity<Void> deleteRecruiting(
-            @PathVariable Long recruitingId,
-            @PathVariable Long myId
-    ) {
+    @DeleteMapping("/{recruitingId}") // 모집글 삭제
+    public ResponseEntity<Void> deleteRecruiting(@PathVariable Long recruitingId) {
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
         recruitingService.deleteRecruiting(recruitingId, myId);
         return ResponseEntity.ok().build();
     }

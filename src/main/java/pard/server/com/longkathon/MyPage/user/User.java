@@ -22,10 +22,9 @@ public class User {
     private String gpa; // 학점
     private String email; //사용자 학년
 
-    private String socialId;
+    private boolean isProfileCompleted;
 
-
-
+    //프로필 수정
     public void updateMyprofile (UserDTO.UserRes3 userRes) {
         this.name = userRes.getName();
         this.studentId = userRes.getStudentId();
@@ -36,5 +35,23 @@ public class User {
         this.secondMajor = userRes.getSecondMajor();
         this.gpa = userRes.getGpa();
         this.email = userRes.getEmail();
+    }
+
+    //인적사항 첫 입력
+    public void completeProfile(UserDTO.UserReq1 userReq) {
+        this.name = userReq.getName();
+        this.studentId = userReq.getStudentId();
+        this.grade = userReq.getGrade();
+        this.semester = userReq.getSemester();
+        this.department = userReq.getDepartment();
+        this.firstMajor = userReq.getFirstMajor();
+        this.secondMajor = userReq.getSecondMajor();
+        this.gpa = userReq.getGpa();
+        this.isProfileCompleted = true;
+    }
+
+    public User updateEmail (String newEmail) {
+        this.email = newEmail;
+        return this;
     }
 }
