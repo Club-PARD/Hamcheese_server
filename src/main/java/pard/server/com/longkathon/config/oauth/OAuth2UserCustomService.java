@@ -35,14 +35,13 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
 
-        User user = userRepository.findByEmail(email)
-                .map(entity -> entity.updateEmail(email))
-                .orElse(User.builder()
-                        .email(email)
-                        .name(name)
-                        .isProfileCompleted(false)
-                        .build());
-
-        return userRepository.save(user);
+        return userRepository.findByEmail(email)
+                .orElseGet(() -> userRepository.save(
+                        User.builder()
+                                .email(email)
+                                .name(name)
+                                .isProfileCompleted(false)
+                                .build()
+                ));
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import pard.server.com.longkathon.MyPage.user.User;
+import pard.server.com.longkathon.config.jwt.token.CustomPrincipal;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -64,9 +65,10 @@ public class TokenProvider {
         Claims claims = getClaims(token);
         var authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
 
-        var principal = new org.springframework.security.core.userdetails.User(
-                claims.getSubject(), "", authorities
-        );
+        Long userId = claims.get("userId", Long.class);
+        String email = claims.getSubject(); // subject에 email 넣었으니까
+
+        var principal =  new CustomPrincipal(userId, email);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }

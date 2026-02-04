@@ -33,32 +33,20 @@ public class UserService {
     private final RecruitingRepo recruitingRepo;
     private final MyKeywordService myKeywordService;
 
-    public UserDTO.UserRes2 createUser(UserDTO.UserReq1 userReq, String fileName) { //회원가입에서 받은 인적사항으로 유저를 생성
-        User user = User.builder() //유저를 생성 후 DB저장
-                .name(userReq.getName())
-                .grade(userReq.getGrade())
-                .studentId(userReq.getStudentId())
-                .department(userReq.getDepartment())
-                .firstMajor(userReq.getFirstMajor())
-                .secondMajor(userReq.getSecondMajor())
-                .email(userReq.getEmail())
-                .gpa(userReq.getGpa())
-                .socialId(userReq.getSocialId())
-                .grade(userReq.getGrade())
-                .semester(userReq.getSemester())
-                .build();
-        userRepo.save(user); //DB저장
+    @Transactional
+    public UserDTO.UserRes2 createUser(UserDTO.UserReq1 userReq, String fileName, Long myId) { //회원가입에서 받은 인적사항으로 유저를 생성
+
+        User user = userRepo.findById(myId).orElse(null); //첫 로그인때 생성된 유저를 찾아 비어있는 인적사항들을 채워준다
+
+        user.completeProfile(userReq); //인적사항 입력하는 user 자세 메서드
 
         if(fileName != null) { //파일이 null이 아닐때만 파일 이름을 DB에 유지
             userFileService.createImageFile(user.getUserId(), fileName); //유저에 대한 프로필사진을 유지하기위함
         }
         UserDTO.UserRes2 userRes = UserDTO.UserRes2.builder() //프론트에게 userId, name을 리턴
-                .myId(user.getUserId())
                 .name(user.getName())
                 .imageUrl(userFileService.getURL(user.getUserId()))
                 .build();
-        log.info("[createUser] response dto => myId={}, name={}, imageUrl={}",
-                userRes.getMyId(), userRes.getName(), userRes.getImageUrl());
         return userRes;
     }
 
@@ -288,4 +276,6 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
+
+
 }

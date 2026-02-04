@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pard.server.com.longkathon.config.jwt.TokenProvider;
+import pard.server.com.longkathon.config.jwt.token.CustomPrincipal;
 
 
 import java.io.IOException;
@@ -46,15 +47,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter { //OncePerR
         boolean valid = tokenProvider.validToken(token);
         log.info("[JWT] validToken={}", valid);
 
-        if (valid) { //유효한지 확인해서 유효하다면
-            Authentication authentication = tokenProvider.getAuthentication(token); //authentication객체생
+        if (valid) {
+            Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("[JWT] authentication set. principal={}", authentication.getName());
-            //SecurityContext에 인증정보를 저장
-            //필터를 지나 controller에 가면 이 인증정보의userId등의 정보를 꺼내 사용한다.
-        }else{
-            log.info("[JWT] invalid token -> authentication NOT set");
+
+            if (authentication.getPrincipal() instanceof CustomPrincipal p) {
+                log.info("[JWT] authentication set. userId={}, email={}", p.userId(), p.email());
+            } else {
+                log.info("[JWT] authentication set. principalType={}", authentication.getPrincipal().getClass().getName());
+            }
         }
+
         //만약 유효하지 않은 accessToken이면 authentication도 생성안되고 SecurityContext에저장도 안됨
         //모든 필터들은 Spring Security에 존재하는데, 인증정보가 없으면 Spring Security의 “인가 단계”에서 막혀서 401이 발생하여
         //프론트에게 RefreshToken을 사용해 새로운 AccessToken을 발급하라고 알린다.

@@ -58,7 +58,6 @@ public class UserDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserRes2{ //회원가입 성공 후 리턴되는 로그인된 계정 id, 사용자 이름, 유저 프로필 URL
-        private Long myId;
         private String name;
         private String imageUrl;
     }
@@ -156,9 +155,6 @@ public class UserDTO {
         private String secondMajor;
         private String phoneNumber;
         private String gpa;
-
-        private String email;
-        private String socialId;
     }
 
     @Builder

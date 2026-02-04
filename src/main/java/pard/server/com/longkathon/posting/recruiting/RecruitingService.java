@@ -301,10 +301,10 @@ public class RecruitingService {
 
 
     @Transactional
-    public void createRecruiting(Long userId, RecruitingDTO.RecruitingReq2 req) {
+    public void createRecruiting(Long myId, RecruitingDTO.RecruitingReq2 req) {
 
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        User user = userRepo.findById(myId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + myId));
 
         Recruiting savedRecruiting = recruitingRepo.save(
                 Recruiting.builder()
@@ -346,7 +346,6 @@ public class RecruitingService {
 
     @Transactional
     public void updateRecruiting(Long recruitingId, Long myId, RecruitingDTO.RecruitingPatchReq req) {
-
         Recruiting recruiting = recruitingRepo.findById(recruitingId)
                 .orElseThrow(() -> new IllegalArgumentException("Recruiting not found: " + recruitingId));
 
