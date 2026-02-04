@@ -25,7 +25,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofMinutes(1);
-    public static final String REDIRECT_PATH = "http://localhost:3000/oauth/callback"; //로그인 성공시에 프론트가 띄워야할 url설정
+    public static final String REDIRECT_SET_PROFILE = "http://localhost:3000/oauth/callback"; //로그인 성공시에 프론트가 띄워야할 url설정
+    public static final String REDIRECT_MAINPAGE = "http://localhost:3000/oauth/main";
 
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -45,7 +46,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         //Access Token 발급 → 프론트로 전달할 URL 만들기
         String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
-        String targetUrl = getTargetUrl(accessToken);
+        String targetUrl = getTargetUrl(accessToken, user); //토큰과 유저를 같이 전달해서 기존 회원인지 첫 가입인지 판단해서
+        //리다이렉 url을 설정한다.
 
         //인증 관련 설정값, 쿠키 제거 = OAuth2 로그인 과정 중 사용했던 “인증 관련 임시 데이터”를 삭제
         //authorizationRequest를 쿠키에 저장했으니 그 쿠키를 제거함
@@ -82,10 +84,17 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     //프론트로 보낼 redirect URL을 만들고,쿼리 파라미터로 token=<accessToken>을 붙임
-    private String getTargetUrl(String token) {
-        return UriComponentsBuilder.fromUriString(REDIRECT_PATH)
-                .queryParam("token", token)
-                .build()
-                .toUriString();
+    private String getTargetUrl(String token, User user) {
+        if(user.isProfileCompleted()){ //기존 가입한 회원이면
+            return UriComponentsBuilder.fromUriString(REDIRECT_MAINPAGE) //메인페이지 주소로 리다이렉
+                    .queryParam("token", token)
+                    .build()
+                    .toUriString();
+        }else{//새로운 회원이라면 인적사항 입력 페이지로 리다이렉
+            return UriComponentsBuilder.fromUriString(REDIRECT_SET_PROFILE)
+                    .queryParam("token", token)
+                    .build()
+                    .toUriString();
+        }
     }
 }
