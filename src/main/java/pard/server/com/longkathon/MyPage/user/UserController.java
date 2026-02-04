@@ -114,6 +114,11 @@ public class UserController {
         return userService.firstPage();
     }
 
+    @GetMapping("/tokenTest")
+    public String test(){
+        return "Test!!!";
+    }
+
 
 
 }

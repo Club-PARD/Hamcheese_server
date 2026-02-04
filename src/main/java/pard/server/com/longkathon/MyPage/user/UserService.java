@@ -279,4 +279,13 @@ public class UserService {
                 })
                 .toList();
     }
+
+    //JWT에서 RefreshToken으로 새로운 AccessToken을 생성할때 사용
+    public User findById(Long userId) {
+        return userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+    }
+
+    public User findByEmail(String email) {
+        return userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
 }

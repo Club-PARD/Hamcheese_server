@@ -24,7 +24,7 @@ public class User {
 
     private String socialId;
 
-
+    private boolean isProfileCompleted;
 
     public void updateMyprofile (UserDTO.UserRes3 userRes) {
         this.name = userRes.getName();
@@ -36,5 +36,10 @@ public class User {
         this.secondMajor = userRes.getSecondMajor();
         this.gpa = userRes.getGpa();
         this.email = userRes.getEmail();
+    }
+
+    public User updateEmail (String newEmail) {
+        this.email = newEmail;
+        return this;
     }
 }
