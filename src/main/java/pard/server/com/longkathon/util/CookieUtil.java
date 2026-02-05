@@ -3,6 +3,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.util.SerializationUtils;
+import org.springframework.web.util.WebUtils;
 
 import java.util.Base64;
 
@@ -49,5 +50,14 @@ public class CookieUtil {
                         Base64.getUrlDecoder().decode(cookie.getValue())
                 )
         );
+    }
+
+    //쿠키에서 refreshToken 추출
+    public static String extractRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, "refresh_token"); // 쿠키 이름 맞춰줘
+        if (cookie == null || cookie.getValue() == null || cookie.getValue().isBlank()) {
+            return null;
+        }
+        return cookie.getValue();
     }
 }
