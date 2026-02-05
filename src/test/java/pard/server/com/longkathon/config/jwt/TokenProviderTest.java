@@ -43,7 +43,6 @@ class TokenProviderTest {
                         .secondMajor("전자공학과")
                         .gpa("3.50")             // String 타입이므로 "3.50"
                         .email("user@gmail.com")
-                        .socialId("google_11223344556677889900")
                         .build()
         );
 
