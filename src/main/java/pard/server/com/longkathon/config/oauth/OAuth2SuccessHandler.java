@@ -2,6 +2,7 @@ package pard.server.com.longkathon.config.oauth;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -18,6 +19,7 @@ import pard.server.com.longkathon.util.CookieUtil;
 import java.io.IOException;
 import java.time.Duration;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -25,8 +27,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofMinutes(1);
-    public static final String REDIRECT_SET_PROFILE = "http://localhost:3000/oauth/callback"; //로그인 성공시에 프론트가 띄워야할 url설정
-    public static final String REDIRECT_MAINPAGE = "http://localhost:3000/oauth/main";
+    public static final String REDIRECT_SET_PROFILE = "http://localhost:3000/?view=setup"; //로그인 성공시에 프론트가 띄워야할 url설정
+    public static final String REDIRECT_MAINPAGE = "http://localhost:3000/?view=feed";
 
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -86,11 +88,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     //프론트로 보낼 redirect URL을 만들고,쿼리 파라미터로 token=<accessToken>을 붙임
     private String getTargetUrl(String token, User user) {
         if(user.isProfileCompleted()){ //기존 가입한 회원이면
+            log.info("isProfileCompleted = {} / true 여야한다.!", user.isProfileCompleted());
             return UriComponentsBuilder.fromUriString(REDIRECT_MAINPAGE) //메인페이지 주소로 리다이렉
                     .queryParam("token", token)
                     .build()
                     .toUriString();
         }else{//새로운 회원이라면 인적사항 입력 페이지로 리다이렉
+            log.info("isProfileCompleted = {} / false 여야한다.!", user.isProfileCompleted());
             return UriComponentsBuilder.fromUriString(REDIRECT_SET_PROFILE)
                     .queryParam("token", token)
                     .build()

@@ -8,8 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
-    Optional <User> findBySocialId(String socialId); //로그인에서 DB에 이미 가입된 사용자인지 확인
-
     //학부, 이름 검색 필터
     List<User> findByDepartmentInAndNameContaining(List<String> departments, String name);
 

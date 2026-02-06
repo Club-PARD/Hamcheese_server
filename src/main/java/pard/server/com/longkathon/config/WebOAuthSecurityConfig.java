@@ -71,6 +71,7 @@ public class WebOAuthSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // ✅ 1) OAuth2 로그인 흐름에 필요한 엔드포인트는 열어줘야 함
                         .requestMatchers("/oauth2/authorization/**", "/login/oauth2/code/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         // ✅ 2) “로그인 없이 허용”하려는 API들
                         .requestMatchers(apiToken).permitAll()
                         .requestMatchers(mateFindAll, mateFilter, recruitingFindAll, recruitingFilter).permitAll()
@@ -127,6 +128,7 @@ public class WebOAuthSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:3000")); // 프론트 주소
+        config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // ✅ 쿠키(refreshToken) 쓰면 필수
