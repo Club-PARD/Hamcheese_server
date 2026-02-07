@@ -67,6 +67,14 @@ public class WebOAuthSecurityConfig {
                 //직접 만든 헤더를 확인 할 필터를 추가
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(
+                                "/chat/inbox/**",   // SockJS
+                                "/v1/**",           // ✅ 너의 REST API (chatRoom 등)
+                                "/api/**"           // ✅ refresh-token, token 등
+                        )
+                )
+
                 // ✅ authorizeRequests -> authorizeHttpRequests 로 변경
                 .authorizeHttpRequests(auth -> auth
                         // ✅ 1) OAuth2 로그인 흐름에 필요한 엔드포인트는 열어줘야 함
@@ -75,6 +83,7 @@ public class WebOAuthSecurityConfig {
                         // ✅ 2) “로그인 없이 허용”하려는 API들
                         .requestMatchers(apiToken).permitAll()
                         .requestMatchers(mateFindAll, mateFilter, recruitingFindAll, recruitingFilter).permitAll()
+                        .requestMatchers("/chat/inbox/**").permitAll()
                         // ✅ 3) 그 외 전부 인증 필요
                         .anyRequest().authenticated()
                 )

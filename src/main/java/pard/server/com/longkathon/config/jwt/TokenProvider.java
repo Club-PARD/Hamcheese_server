@@ -80,10 +80,30 @@ public class TokenProvider {
         return claims.get("userId", Long.class);
     }
 
-    private Claims getClaims(String token) {
+    public Claims getClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    //StompHandler에서 사용하는 auth에서 Bearer를 제거하고 JWT만 리턴하는 메서드
+    public String substringToken(String authorizationHeader) {
+        if (authorizationHeader == null || authorizationHeader.isBlank()) {
+            throw new IllegalArgumentException("Authorization header is empty.");
+        }
+        final String BEARER = "Bearer ";
+
+        if (!authorizationHeader.startsWith(BEARER)) {
+            throw new IllegalArgumentException("Authorization header must start with 'Bearer '.");
+        }
+
+        String jwt = authorizationHeader.substring(BEARER.length()).trim();
+
+        if (jwt.isEmpty()) {
+            throw new IllegalArgumentException("JWT is missing after 'Bearer '.");
+        }
+
+        return jwt;
     }
 }
