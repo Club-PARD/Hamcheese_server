@@ -26,7 +26,7 @@ public class ChatRoomService {
         }
 
         userRepository.findById(sellerId).orElseThrow(()-> new IllegalArgumentException("USER_NOT_FOUND"));
-        Optional<ChatRoom> chatRoom = chatRoomRepository.findByUserIdAndSellerId(userId, sellerId);
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findChatRoomByUsers(userId, sellerId);
 
         if (chatRoom.isPresent()) {
             Long chatRoomId = chatRoom.get().getId();
