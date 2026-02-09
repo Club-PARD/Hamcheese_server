@@ -26,76 +26,34 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-        if (accessor.getCommand() == null) return message;
-
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-            String auth = accessor.getFirstNativeHeader("Authorization");
-            if (auth == null) auth = accessor.getFirstNativeHeader("authorization"); // 혹시 모를 케이스
+            String token = accessor.getFirstNativeHeader("Authorization");
 
-            if (auth == null || !auth.startsWith("Bearer ")) {
-                throw new MessagingException("Authorization 헤더가 없거나 Bearer 형식이 아닙니다.");
-            }
+            if (token != null && token.startsWith("Bearer ")) {
+                try{
+                    jwtUtil.validToken(token); //토큰을 검증
+                    //검증에 성공하면
+                    String jwt = jwtUtil.substringToken(token); //Bearer를 제거하여 jwt만 뽑고
+                    Claims claims = jwtUtil.getClaims(jwt); //jwt에서 Claim을 뽑는다.
 
-            try {
-                String jwt = jwtUtil.substringToken(auth);
+                    String email = String.valueOf(claims.getSubject());
+                    Long userId = claims.get("userId", Long.class);
+                    String userName = userRepository.findById(userId).get().getName();
 
-                if (!jwtUtil.validToken(jwt)) {
-                    throw new MessagingException("JWT 인증 실패(유효하지 않은 토큰)");
+
+                    accessor.getSessionAttributes().put("userId", userId);
+                    accessor.getSessionAttributes().put("email", email);
+                    accessor.getSessionAttributes().put("name", userName);
+
+                    log.info("[WebSocket 인증 성공] userId: {}, email: {}", userId, email);
+                } catch (Exception e){
+                    log.error("WebSocket 인증 실패 {}", e.getMessage());
+                    throw new MessagingException("JWT 인증 실패");
                 }
-
-                Claims claims = jwtUtil.getClaims(jwt);
-                if (claims == null) throw new MessagingException("claims is null");
-
-                String sub = claims.getSubject();
-
-                Long userId = null;
-
-                // 1) sub가 숫자면 userId
-                if (sub != null && sub.matches("\\d+")) {
-                    userId = Long.valueOf(sub);
-                } else {
-                    // 2) userId 클레임이 있으면 우선 사용 (Long/Integer 모두 커버)
-                    Number n = claims.get("userId", Number.class);
-                    if (n != null) userId = n.longValue();
-
-                    // 3) email 클레임이 없으면 sub를 email로 사용
-                    String email = claims.get("email", String.class);
-                    if (email == null) email = sub;
-
-                    if (userId == null) {
-                        if (email == null) throw new MessagingException("email도 userId도 없음");
-                        userId = userRepository.findByEmail(email)
-                                .orElseThrow(() -> new IllegalArgumentException("USER_NOT_FOUND"))
-                                .getUserId();
-                    }
-                }
-
-                String email = claims.get("email", String.class);
-                if (email == null && sub != null && sub.contains("@")) email = sub; // email 보정
-
-                String nickname = claims.get("nickname", String.class); // 없어도 OK(null)
-
-                // 세션 attrs null 방어
-                if (accessor.getSessionAttributes() == null) {
-                    accessor.setSessionAttributes(new java.util.HashMap<>());
-                }
-
-                accessor.getSessionAttributes().put("userId", userId);
-                accessor.getSessionAttributes().put("email", email);
-                accessor.getSessionAttributes().put("nickname", nickname);
-
-                log.info("[WebSocket 인증 성공] userId: {}, email: {}, nickname: {}", userId, email, nickname);
-
-            } catch (Exception e) {
-                log.error("WebSocket 인증 실패", e); // ✅ e.getMessage 말고 스택트레이스!
-                throw new MessagingException("JWT 인증 실패");
             }
         }
-
         if (StompCommand.SEND.equals(accessor.getCommand())) {
-            Object userId = accessor.getSessionAttributes() != null
-                    ? accessor.getSessionAttributes().get("userId")
-                    : null;
+            Object userId = accessor.getSessionAttributes().get("userId");
 
             if (userId == null) {
                 log.warn("SEND: WebSocket세션에 사용자 정보 없음");
@@ -104,8 +62,6 @@ public class StompHandler implements ChannelInterceptor {
 
             log.info("SEND: userId={} ", userId);
         }
-
         return message;
     }
-
 }
