@@ -15,7 +15,7 @@ import pard.server.com.longkathon.config.webSocket.dto.CreateChatRoomRequest;
 @RequiredArgsConstructor
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
-    @PostMapping("/v1/chatRoom")
+    @PostMapping("/v1/chatRoom") //채팅바을 열어라.
     public ResponseEntity<ChatRoomResponse> enterChatRoom(@RequestBody CreateChatRoomRequest req,
                                                            @AuthenticationPrincipal CustomPrincipal principal){
         return new ResponseEntity<>(chatRoomService.createChatRoom(principal.userId(), req.getSellerId()), HttpStatus.CREATED);

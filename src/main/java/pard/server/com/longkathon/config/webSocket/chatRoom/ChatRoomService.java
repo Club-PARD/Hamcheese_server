@@ -28,7 +28,7 @@ public class ChatRoomService {
         userRepository.findById(sellerId).orElseThrow(()-> new IllegalArgumentException("USER_NOT_FOUND"));
         Optional<ChatRoom> chatRoom = chatRoomRepository.findChatRoomByUsers(userId, sellerId);
 
-        if (chatRoom.isPresent()) {
+        if (chatRoom.isPresent()) { //채팅방이 존재한다면, 존재하는 채팅방을 리턴
             Long chatRoomId = chatRoom.get().getId();
             List<ChatMessageResponse> messages = chatMessageRepository.findMessagesWithUserByChatRoomId(chatRoomId);
             return ChatRoomResponse.fromEntity(chatRoom.get(), messages);
