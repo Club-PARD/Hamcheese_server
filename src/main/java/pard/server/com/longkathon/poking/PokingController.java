@@ -24,14 +24,14 @@ public class PokingController {
     }
 
     //찌르기 가능 여부 확인 (모집글에서)
-    @GetMapping("/{recruitingId}") // 찌르기가 이미 존재하는지 여부
+    @GetMapping("/recruiting/{recruitingId}") // 찌르기가 이미 존재하는지 여부
     public ResponseEntity<PokingRes.CanPokeRes> canPokeRecruiting(@PathVariable Long recruitingId) {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
         return ResponseEntity.ok(pokingService.canPokeRecruiting(recruitingId, myId));
     }
 
     //찌르기 가능 여부 확인 (유저 프로필에서)
-    @GetMapping("/{userId}") // 찌르기가 이미 존재하는지 여부
+    @GetMapping("/userProfile/{userId}") // 찌르기가 이미 존재하는지 여부
     public ResponseEntity<PokingRes.CanPokeRes> canPokeProfile(@PathVariable Long userId) {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
         return ResponseEntity.ok(pokingService.canPokeProfile(userId, myId));

@@ -68,11 +68,7 @@ public class WebOAuthSecurityConfig {
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(
-                                "/chat/inbox/**",   // SockJS
-                                "/v1/**",           // ✅ 너의 REST API (chatRoom 등)
-                                "/api/**"           // ✅ refresh-token, token 등
-                        )
+                        .disable()
                 )
 
                 // ✅ authorizeRequests -> authorizeHttpRequests 로 변경
