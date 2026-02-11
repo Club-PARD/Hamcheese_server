@@ -26,7 +26,7 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+        if (StompCommand.CONNECT.equals(accessor.getCommand())) { //최초 연결 시도
             String token = accessor.getFirstNativeHeader("Authorization");
 
             if (token != null && token.startsWith("Bearer ")) {
@@ -41,7 +41,7 @@ public class StompHandler implements ChannelInterceptor {
                     String userName = userRepository.findById(userId).get().getName();
 
 
-                    accessor.getSessionAttributes().put("userId", userId);
+                    accessor.getSessionAttributes().put("userId", userId); //세션에 뽑은 정보들을 저장하여 유지
                     accessor.getSessionAttributes().put("email", email);
                     accessor.getSessionAttributes().put("name", userName);
 
