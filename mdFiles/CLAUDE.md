@@ -192,12 +192,12 @@ src/main/java/pard/server/com/longkathon/
 
 ## 📚 Related Documentation
 
-- **API Spec**: See [README.md](./README.md) (Section "📋 상세 API 문서") and [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
+- **API Spec**: See [README.md](../README.md) (Section "📋 상세 API 문서") and [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
 - **Database Schema**: See ERD image in README.md or check MySQL for current schema
 - **Troubleshooting & Lessons Learned**: See README.md (Section "### 트러블슈팅")
 - **Swagger/OpenAPI**: Live at `/swagger-ui/index.html` when server runs
-- **Google OAuth2 Login Flow**: See [OAUTH2_LOGIN_FLOW.md](./OAUTH2_LOGIN_FLOW.md) (detailed with diagrams)
-- **OAuth2 Quick Reference**: See [OAUTH2_QUICK_REFERENCE.md](./OAUTH2_QUICK_REFERENCE.md) (for quick lookups)
+- **Google OAuth2 Login Flow**: See [OAUTH2_LOGIN_FLOW.md](OAUTH2_LOGIN_FLOW.md) (detailed with diagrams)
+- **OAuth2 Quick Reference**: See [OAUTH2_QUICK_REFERENCE.md](OAUTH2_QUICK_REFERENCE.md) (for quick lookups)
 
 ## 📝 Code Style Notes
 
