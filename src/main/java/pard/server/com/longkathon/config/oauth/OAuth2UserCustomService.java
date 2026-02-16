@@ -27,7 +27,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         //구글에서 사용자 정보를 받아와서 OAuth2User로 만들어줌
 
         // 한동대학교 이메일 검증
-        validateHandongEmail(user);
+        //validateHandongEmail(user);
 
         saveOrUpdate(user);
 
