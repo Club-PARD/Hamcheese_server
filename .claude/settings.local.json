@@ -16,7 +16,8 @@
       "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -u root -p5991 -e \"USE LongkathonPlus; SELECT COUNT\\(*\\) as refresh_token_count FROM refresh_token; DESCRIBE refresh_token;\")",
       "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -u root -p5991 -e \"USE LongkathonPlus; TRUNCATE TABLE refresh_token; SELECT COUNT\\(*\\) as refresh_token_count FROM refresh_token;\")",
       "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -u root -p5991 -e \"USE LongkathonPlus; DESCRIBE refresh_token;\")",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(curl:*)"
     ]
   }
 }

@@ -5,6 +5,10 @@ import org.springframework.stereotype.Service;
 import pard.server.com.longkathon.MyPage.user.User;
 import pard.server.com.longkathon.MyPage.user.UserRepo;
 import pard.server.com.longkathon.MyPage.user.UserService;
+import pard.server.com.longkathon.common.exception.ExpiredRefreshTokenException;
+import pard.server.com.longkathon.common.exception.InvalidJwtException;
+import pard.server.com.longkathon.common.exception.InvalidRefreshTokenException;
+import pard.server.com.longkathon.common.exception.UserNotFoundException;
 import pard.server.com.longkathon.config.jwt.TokenProvider;
 import pard.server.com.longkathon.config.jwt.refreshToken.RefreshToken;
 import pard.server.com.longkathon.config.jwt.refreshToken.RefreshTokenRepository;
@@ -21,24 +25,26 @@ public class TokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepo userRepository;
 
-    //리프레시 토큰을 전달받음
+    // RefreshToken을 전달받아 새로운 AccessToken 생성
     public CreateAccessTokenResponse createNewAccessToken(String refreshToken) {
         // 1. RefreshToken 검증 (DB에 존재하는지, 만료되지 않았는지)
         RefreshToken storedToken = refreshTokenRepository.findByRefreshToken(refreshToken)
-                 .orElseThrow(() -> new IllegalArgumentException("Invalid RefreshToken: DB에 존재하지 않음"));
+                 .orElseThrow(() -> new InvalidRefreshTokenException("RefreshToken이 DB에 존재하지 않습니다"));
+
         // 2. RefreshToken이 만료되었는지 확인
         if (storedToken.isExpired()) {
-            throw new IllegalArgumentException("RefreshToken expired: 기간만료");
+            throw new ExpiredRefreshTokenException("RefreshToken이 만료되었습니다");
         }
 
         // 3. userId로 User 조회
         User user = userRepository.findById(storedToken.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다"));
 
         // 4. JWT RefreshToken 검증 (유효한 토큰인지)
         if (!tokenProvider.validToken(refreshToken)) {
-            throw new IllegalArgumentException("Invalid JWT RefreshToken");
+            throw new InvalidJwtException("JWT 토큰이 유효하지 않습니다");
         }
+
         // 5. AccessToken 생성
         String accessToken = tokenProvider.generateToken(user, Duration.ofMinutes(15));
 
