@@ -13,7 +13,6 @@ import pard.server.com.longkathon.MyPage.user.UserService;
 import pard.server.com.longkathon.config.jwt.TokenProvider;
 import pard.server.com.longkathon.config.jwt.refreshToken.RefreshToken;
 import pard.server.com.longkathon.config.jwt.refreshToken.RefreshTokenRepository;
-import pard.server.com.longkathon.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import pard.server.com.longkathon.util.CookieUtil;
 
 import java.io.IOException;

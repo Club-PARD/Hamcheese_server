@@ -1,13 +1,12 @@
 package pard.server.com.longkathon.config.jwt.token;
 
-import jakarta.servlet.http.Cookie;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.WebUtils;
 import pard.server.com.longkathon.config.jwt.refreshToken.RefreshTokenService;
 import pard.server.com.longkathon.util.CookieUtil;
 

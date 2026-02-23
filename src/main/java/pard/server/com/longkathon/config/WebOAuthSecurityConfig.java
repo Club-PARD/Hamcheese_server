@@ -10,12 +10,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
-import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,11 +23,7 @@ import pard.server.com.longkathon.config.jwt.refreshToken.RefreshTokenRepository
 import pard.server.com.longkathon.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import pard.server.com.longkathon.config.oauth.OAuth2SuccessHandler;
 import pard.server.com.longkathon.config.oauth.OAuth2UserCustomService;
-
-
 import java.util.List;
-
-import static org.springframework.boot.security.autoconfigure.web.servlet.PathRequest.toH2Console;
 
 @Configuration
 @RequiredArgsConstructor

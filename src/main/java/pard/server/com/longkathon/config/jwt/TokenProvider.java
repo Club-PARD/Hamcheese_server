@@ -1,27 +1,18 @@
 package pard.server.com.longkathon.config.jwt;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Service;
 import pard.server.com.longkathon.MyPage.user.User;
 import pard.server.com.longkathon.config.jwt.token.CustomPrincipal;
-
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
