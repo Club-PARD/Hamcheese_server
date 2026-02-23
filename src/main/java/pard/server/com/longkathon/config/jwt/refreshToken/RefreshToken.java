@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -18,6 +20,9 @@ public class RefreshToken {
 
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
+
+    @Column(name = "expiry_date", nullable = false)
+    private LocalDateTime expiryDate;
 
     public RefreshToken(Long userId, String refreshToken) {
         this.userId = userId;
