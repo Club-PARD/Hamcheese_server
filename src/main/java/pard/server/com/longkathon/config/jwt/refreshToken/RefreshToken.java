@@ -24,13 +24,15 @@ public class RefreshToken {
     @Column(name = "expiry_date", nullable = false)
     private LocalDateTime expiryDate;
 
-    public RefreshToken(Long userId, String refreshToken) {
+    public RefreshToken(Long userId, String refreshToken, LocalDateTime expiryDate) {
         this.userId = userId;
         this.refreshToken = refreshToken;
+        this.expiryDate = expiryDate;
     }
 
-    public RefreshToken update(String newRefreshToken) {
+    public RefreshToken update(String newRefreshToken, LocalDateTime newExpiryDate) {
         this.refreshToken = newRefreshToken;
+        this.expiryDate = newExpiryDate;
         return this;
     }
 }

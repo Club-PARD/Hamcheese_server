@@ -17,6 +17,7 @@ import pard.server.com.longkathon.util.CookieUtil;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -61,9 +62,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     //생성된 리프레시 토큰을 전달받아 DB에 저장
     private void saveRefreshToken(Long userId, String newRefreshToken) {
+        LocalDateTime expiryDate = LocalDateTime.now().plus(REFRESH_TOKEN_DURATION);
+
         RefreshToken refreshToken = refreshTokenRepository.findByUserId(userId)
-                .map(entity -> entity.update(newRefreshToken))
-                .orElse(new RefreshToken(userId, newRefreshToken));
+                .map(entity -> entity.update(newRefreshToken, expiryDate))
+                .orElse(new RefreshToken(userId, newRefreshToken, expiryDate));
 
         refreshTokenRepository.save(refreshToken);
     }

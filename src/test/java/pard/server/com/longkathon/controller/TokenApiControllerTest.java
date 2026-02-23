@@ -19,7 +19,7 @@ import pard.server.com.longkathon.config.jwt.refreshToken.RefreshToken;
 import pard.server.com.longkathon.config.jwt.refreshToken.RefreshTokenRepository;
 import pard.server.com.longkathon.config.jwt.token.CreateAccessTokenRequest;
 
-
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -78,7 +78,7 @@ class TokenApiControllerTest {
                 .build()
                 .createToken(jwtProperties);
 
-        refreshTokenRepository.save(new RefreshToken(testUser.getUserId(), refreshToken));
+        refreshTokenRepository.save(new RefreshToken(testUser.getUserId(), refreshToken, LocalDateTime.now().plusDays(14)));
 
         CreateAccessTokenRequest request = new CreateAccessTokenRequest();
         request.setRefreshToken(refreshToken);
