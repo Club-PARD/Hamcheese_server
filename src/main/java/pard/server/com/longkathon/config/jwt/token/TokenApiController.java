@@ -4,13 +4,14 @@ package pard.server.com.longkathon.config.jwt.token;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pard.server.com.longkathon.config.jwt.refreshToken.RefreshTokenService;
 import pard.server.com.longkathon.util.CookieUtil;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @RestController
@@ -30,12 +31,16 @@ public class TokenApiController {
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         // 1) 요청 쿠키에서 refresh_token 꺼내기
         String refreshToken = CookieUtil.extractRefreshTokenFromCookie(request);
-        // 2) DB/Redis에서 refreshToken 삭제(또는 해당 유저 세션 삭제)
-        refreshTokenService.deleteByRefreshToken(refreshToken);
-        // 3) 쿠키 만료로 삭제
-        CookieUtil.deleteCookie(request, response, "refresh_token");
 
+        try {
+            if (refreshToken != null && !refreshToken.isBlank()) {// 2) DB/Redis에서 refreshToken 삭제(또는 해당 유저 세션 삭제)
+                refreshTokenService.deleteByRefreshToken(refreshToken);
+            }
+        } catch (Exception e) {
+            log.warn("Logout: failed to delete refresh token from store", e);
+        } finally {// 3) 쿠키 만료로 삭제
+            CookieUtil.deleteCookie(request, response, "refresh_token"); // ✅ 무조건 실행
+        }
         return ResponseEntity.ok().build();
-
     }
 }
