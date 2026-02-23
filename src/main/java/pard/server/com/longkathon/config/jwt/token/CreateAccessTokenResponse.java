@@ -9,4 +9,5 @@ import lombok.Setter;
 @Setter
 public class CreateAccessTokenResponse {
     private String accessToken;
+    private boolean isProfileCompleted;
 }

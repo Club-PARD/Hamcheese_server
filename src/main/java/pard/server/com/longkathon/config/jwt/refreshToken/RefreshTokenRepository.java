@@ -24,4 +24,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 
     // 만료된 토큰 개수 조회 (로깅용)
     long countByExpiryDateBefore(LocalDateTime currentTime);
+
+    boolean existsRefreshTokenByRefreshToken(String refreshToken);
 }

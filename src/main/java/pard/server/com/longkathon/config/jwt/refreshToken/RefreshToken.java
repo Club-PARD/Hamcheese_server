@@ -35,4 +35,9 @@ public class RefreshToken {
         this.expiryDate = newExpiryDate;
         return this;
     }
+
+    public boolean isExpired() {
+        // expiryDate가 null이면 만료로 간주(안전장치)
+        return expiryDate == null || !expiryDate.isAfter(LocalDateTime.now());
+    }
 }
