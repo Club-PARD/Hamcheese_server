@@ -99,7 +99,7 @@ public class RecruitingDTO {
         private int recruitPeople;
         private String title;
         private String context;
-        private String studentId;
+        private int studentId;
         private String firstMajor;
         private String secondMajor;
         private String imageUrl;

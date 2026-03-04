@@ -14,7 +14,7 @@ public class User extends BaseEntity {
     private Long userId;
 
     private String name; // 사용자 이름
-    private String studentId; //학번
+    private int studentId; //학번
     private String grade; //학년
     private String semester; //학기수
     private String department; //학부
