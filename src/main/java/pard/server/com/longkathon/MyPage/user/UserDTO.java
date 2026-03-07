@@ -141,6 +141,8 @@ public class UserDTO {
         private List<RecruitingDTO.RecruitingRes5> recruitingFeedList = new ArrayList<>();
     }
 
+
+
     @Builder
     @Getter
     @AllArgsConstructor

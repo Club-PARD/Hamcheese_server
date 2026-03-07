@@ -116,6 +116,12 @@ public class UserController {
         return ResponseEntity.ok(portfolioService.getPortfolioTabRealOrder(userId));
     }
 
+    @GetMapping("/peerReview/{userId}") // 상세 프로필 동료평가 탭 (많이 받은순, 최신순 둘다 한번에 리턴)
+    public ResponseEntity<UserDTO.UserRes4> getPeerReviewTab(@PathVariable Long userId) {
+        UserDTO.UserRes4 result = userService.myPeerReview(userId);
+        return ResponseEntity.ok(result);
+    }
+
     /*클릭한 게시물이 본인의 게시물이면
     @GetMapping("/myProfile") //마이 페이지 리턴
     public UserDTO.UserRes3 myProfile() {
