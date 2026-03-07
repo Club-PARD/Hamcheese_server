@@ -50,9 +50,4 @@ public class User extends BaseEntity {
         this.gpa = userReq.getGpa();
         this.isProfileCompleted = true;
     }
-
-    public User updateEmail (String newEmail) {
-        this.email = newEmail;
-        return this;
-    }
 }

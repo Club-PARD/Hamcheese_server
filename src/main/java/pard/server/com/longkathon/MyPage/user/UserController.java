@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pard.server.com.longkathon.MyPage.userFile.UserFileService;
+import pard.server.com.longkathon.likes.keepMate.KeepMateService;
 import pard.server.com.longkathon.s3.AwsS3Service;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class UserController {
     private final UserService userService;
     private final AwsS3Service awsS3Service;
     private final UserFileService userFileService;
+    private final KeepMateService keepMateService;
 
     //회원가입에서 인적사항 입력
     @PatchMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -53,6 +55,13 @@ public class UserController {
             @RequestParam(name = "secondStudentId", required = false) Long secondStudentId
     ) {
         return ResponseEntity.ok(userService.filter(departments, name, firstStudentId, secondStudentId));
+    }
+
+    @PostMapping("/keepMate")// 사용자 찜하기, 찜 당한 유저 id를 받음
+    public ResponseEntity<Void> keepMate(@PathVariable Long userId) {
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
+        keepMateService.createKeepMate(myId, userId);
+        return ResponseEntity.noContent().build();
     }
 //--------------------------------상세 프로필 페이지------------------------------------
     @GetMapping("/equal/{userId}") //프로필 게시글 클릭 시 본인 것인지 유무확인

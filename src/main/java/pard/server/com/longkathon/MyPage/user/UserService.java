@@ -227,22 +227,30 @@ public class UserService {
 
         List<User> users;
 
+        // 케이스 1: 3가지 조건(부서, 이름, 학번 범위)이 모두 입력된 경우
         if (hasDept && hasName && hasStudentRange) {
             users = userRepo.findByDepartmentInAndNameContainingAndStudentIdBetween(
                     departments, name, firstStudentId, secondStudentId
             );
+        // 케이스 2: 부서와 이름 조건만 입력된 경우
         } else if (hasDept && hasName) {
             users = userRepo.findByDepartmentInAndNameContaining(departments, name);
+        // 케이스 3: 부서와 학번 범위 조건만 입력된 경우
         } else if (hasDept && hasStudentRange) {
             users = userRepo.findByDepartmentInAndStudentIdBetween(departments, firstStudentId, secondStudentId);
+        // 케이스 4: 이름과 학번 범위 조건만 입력된 경우
         } else if (hasName && hasStudentRange) {
             users = userRepo.findByNameContainingAndStudentIdBetween(name, firstStudentId, secondStudentId);
+        // 케이스 5: 부서 조건만 입력된 경우
         } else if (hasDept) {
             users = userRepo.findByDepartmentIn(departments);
+        // 케이스 6: 이름 조건만 입력된 경우
         } else if (hasName) {
             users = userRepo.findByNameContaining(name);
+        // 케이스 7: 학번 범위 조건만 입력된 경우
         } else if (hasStudentRange) {
             users = userRepo.findByStudentIdBetween(firstStudentId, secondStudentId);
+        // 케이스 8: 아무런 검색 조건이 없는 경우 (전체 목록 조회)
         } else {
             users = userRepo.findAll();
         }
