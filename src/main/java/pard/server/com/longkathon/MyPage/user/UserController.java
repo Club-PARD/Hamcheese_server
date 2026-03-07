@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pard.server.com.longkathon.MyPage.userFile.UserFileService;
 import pard.server.com.longkathon.likes.keepMate.KeepMateService;
+import pard.server.com.longkathon.portfolio.PortfolioDTO;
+import pard.server.com.longkathon.portfolio.PortfolioService;
 import pard.server.com.longkathon.s3.AwsS3Service;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class UserController {
     private final AwsS3Service awsS3Service;
     private final UserFileService userFileService;
     private final KeepMateService keepMateService;
+    private final PortfolioService portfolioService;
 
     //회원가입에서 인적사항 입력
     @PatchMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -43,8 +46,8 @@ public class UserController {
 //--------------------------둘러보기 페이지----------------------------------------
 
     @GetMapping("/defaultOrder") //메이트 둘러보기 페이지에서 모든 프로필 게시물 띄우기
-    public List<UserDTO.UserRes5> findAll() {
-        return userService.findAll();
+    public ResponseEntity<List<UserDTO.UserRes5>> findAll() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/popularOrder") // 인기순핕터. 찜 많이 받은 유저 순.
@@ -87,23 +90,25 @@ public class UserController {
     }
 //--------------------------------상세 프로필 페이지------------------------------------
     @GetMapping("/equal/{userId}") //프로필 게시글 클릭 시 본인 것인지 유무확인
-    public boolean equal(@PathVariable String userId) {
+    public ResponseEntity<Boolean> equal(@PathVariable String userId) {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
         if (myId.equals(userId)) {
-            return true;
+            return ResponseEntity.ok(true);
         }else{
-            return false;
+            return ResponseEntity.ok(false);
         }
     }
 
     //클릭한 게시물이 남의 게시물이면 (이제 이게 상페프로필 디폴트 값 - 자기소개 탭)
     @GetMapping("/introduction/{userId}") // 상세프로필 자기소개 탭 리턴
-    public UserDTO.UserRes1 mateProfile(@PathVariable Long userId) {
-        return userService.readMateProfile(userId);
+    public ResponseEntity<UserDTO.UserRes1> getIntroductionTab(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.readMateProfile(userId));
     }
 
     @GetMapping("/portfolio/{userId}") // 상세프로필 포트폴리오 탭 리턴
-    public
+    public ResponseEntity<List<PortfolioDTO.Res1>> getPortfolioTab(@PathVariable Long userId) {
+        return ResponseEntity.ok(portfolioService.getPortfolioInProfile(userId));
+    }
 
     /*클릭한 게시물이 본인의 게시물이면
     @GetMapping("/myProfile") //마이 페이지 리턴
