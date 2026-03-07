@@ -234,13 +234,9 @@ public class UserService {
         } else if (hasDept && hasName) {
             users = userRepo.findByDepartmentInAndNameContaining(departments, name);
         } else if (hasDept && hasStudentRange) {
-            users = userRepo.findByDepartmentInAndStudentIdBetween(
-                    departments, firstStudentId, secondStudentId
-            );
+            users = userRepo.findByDepartmentInAndStudentIdBetween(departments, firstStudentId, secondStudentId);
         } else if (hasName && hasStudentRange) {
-            users = userRepo.findByNameContainingAndStudentIdBetween(
-                    name, firstStudentId, secondStudentId
-            );
+            users = userRepo.findByNameContainingAndStudentIdBetween(name, firstStudentId, secondStudentId);
         } else if (hasDept) {
             users = userRepo.findByDepartmentIn(departments);
         } else if (hasName) {
