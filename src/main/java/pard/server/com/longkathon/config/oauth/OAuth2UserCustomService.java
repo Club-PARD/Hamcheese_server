@@ -72,6 +72,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
                                 .email(email)
                                 .name(name)
                                 .isProfileCompleted(false)
+                                .point(0)
                                 .build()
                 ));
     }

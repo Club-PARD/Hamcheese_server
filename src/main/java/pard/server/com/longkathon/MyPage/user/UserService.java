@@ -346,4 +346,9 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
+
+//-------------------------findById--------------------
+    public User findById(Long userId){ //포인트 차감때 유저를 찾기위함
+        return userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
 }

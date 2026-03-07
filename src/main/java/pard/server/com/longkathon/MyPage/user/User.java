@@ -25,7 +25,7 @@ public class User extends BaseEntity {
 
     private boolean isProfileCompleted;
 
-    private int point;
+    private int points;
 
     //프로필 수정
     public void updateMyprofile (UserDTO.UserRes3 userRes) {
@@ -51,5 +51,13 @@ public class User extends BaseEntity {
         this.secondMajor = userReq.getSecondMajor();
         this.gpa = userReq.getGpa();
         this.isProfileCompleted = true;
+    }
+
+    public void pointsMinus(int cost){
+        points -= cost;
+    }
+
+    public void pointsPlus(int cost){
+        points += cost;
     }
 }

@@ -1,11 +1,13 @@
 package pard.server.com.longkathon.MyPage.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pard.server.com.longkathon.MyPage.userFile.UserFileService;
+import pard.server.com.longkathon.common.dto.PointsDTO;
 import pard.server.com.longkathon.likes.keepMate.KeepMateService;
 import pard.server.com.longkathon.portfolio.PortfolioDTO;
 import pard.server.com.longkathon.portfolio.PortfolioService;
@@ -23,6 +25,7 @@ public class UserController {
     private final UserFileService userFileService;
     private final KeepMateService keepMateService;
     private final PortfolioService portfolioService;
+    private final UserRepo userRepo;
 
     //회원가입에서 인적사항 입력
     @PatchMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -120,6 +123,35 @@ public class UserController {
     public ResponseEntity<UserDTO.UserRes4> getPeerReviewTab(@PathVariable Long userId) {
         UserDTO.UserRes4 result = userService.myPeerReview(userId);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/minusPoints/{cost}") // 부정평가 확인을 위한 포인트 차감
+    public ResponseEntity<PointsDTO> minusPoints(@PathVariable int cost) {
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
+        User user = userService.findById(myId);
+
+        if (user.getPoints() < cost) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new PointsDTO(false, "포인트가 부족합니다.", user.getPoints()));
+        }
+
+        user.pointsMinus(cost);
+
+        return ResponseEntity.ok(
+                new PointsDTO(true, "포인트 차감 성공", user.getPoints())
+        );
+    }
+
+    @GetMapping("/plusPoints/{cost}") // 포인트 보상
+    public ResponseEntity<PointsDTO> plusPoints(@PathVariable int cost) {
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
+        User user = userService.findById(myId);
+
+        user.pointsPlus(cost);
+
+        return ResponseEntity.ok(
+                new PointsDTO(true, "포인트 추가 성공", user.getPoints())
+        );
     }
 
     /*클릭한 게시물이 본인의 게시물이면
