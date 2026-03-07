@@ -69,7 +69,7 @@ public class RecruitingService {
                             .findAllByRecruitingId(r.getRecruitingId()).stream()
                             .map(MyKeyword::getKeyword)
                             .toList();
-                    String dateStr = formatRecruitingDate(r.getDate());
+                    String dateStr = formatRecruitingDate(r.getCreatedAt());
 
                     // 3) DTO 조립
                     return RecruitingDTO.RecruitingRes1.builder()
@@ -103,7 +103,7 @@ public class RecruitingService {
                 .getName();
 
         // date (LocalDate -> String)
-        String dateStr = recruiting.getDate() == null ? null : recruiting.getDate().toString();
+        String dateStr = recruiting.getCreatedAt() == null ? null : recruiting.getCreatedAt().toString();
 
         // 키워드: 해당 recruitingId의 키워드 가져오기
         List<String> myKeywordList = myKeywordRepo.findAllByRecruitingId(recruitingId).stream()
@@ -120,11 +120,11 @@ public class RecruitingService {
                             .getName();
 
                     String recentDateStr;
-                    if (r.getDate() == null) {
+                    if (r.getCreatedAt() == null) {
                         recentDateStr = null;
                     }
                     else {
-                        recentDateStr = r.getDate().toLocalDate().toString();
+                        recentDateStr = r.getCreatedAt().toLocalDate().toString();
                     }
 
                     return RecruitingDTO.RecruitingRes_recentPosts.builder()
@@ -226,7 +226,7 @@ public class RecruitingService {
                             .map(MyKeyword::getKeyword)
                             .toList();
 
-                    String dateStr = (r.getDate() == null) ? null : r.getDate().toString();
+                    String dateStr = (r.getCreatedAt() == null) ? null : r.getCreatedAt().toString();
 
                     return RecruitingDTO.RecruitingRes3.builder()
                             .recruitingId(r.getRecruitingId())
@@ -264,7 +264,7 @@ public class RecruitingService {
                             .toList();
 
                     // date (LocalDate -> String)
-                    String dateStr = r.getDate() == null ? null : r.getDate().toString();
+                    String dateStr = r.getCreatedAt() == null ? null : r.getCreatedAt().toString();
 
                     return RecruitingDTO.RecruitingRes4.builder()
                             .recruitingId(r.getRecruitingId())

@@ -28,7 +28,7 @@ public class UserDTO {
         private String gpa;
         private int studentId;
         private String semester;
-        private String imageUrl; //****
+        private String imageUrl;
         private String grade;
 
         //2. 자기소개 섹션
@@ -40,7 +40,7 @@ public class UserDTO {
         @Builder.Default
         private List<ActivityDTO> activity = new ArrayList<>();
 
-        //4. 동료평가 섹션
+        /*4. 동료평가 섹션
         @Builder.Default
         private Map<String, Integer> peerGoodKeyword = new HashMap<>();
         private int goodKeywordCount; //유저가 받은 긍정 키워드 총 개수
@@ -50,7 +50,7 @@ public class UserDTO {
         private int badKeywordCount; //유저가 받은 부정 키워드 총 개수
 
         @Builder.Default //동료평가 최신순으로 담은 리스트
-        private List<PeerReviewDTO.PeerReviewReq1> peerReviewRecent = new ArrayList<>();
+        private List<PeerReviewDTO.PeerReviewReq1> peerReviewRecent = new ArrayList<>();*/
     }
 
     @Builder

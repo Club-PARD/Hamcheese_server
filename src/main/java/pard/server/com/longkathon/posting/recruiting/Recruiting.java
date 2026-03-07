@@ -1,16 +1,14 @@
 package pard.server.com.longkathon.posting.recruiting;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import pard.server.com.longkathon.BaseEntity.BaseEntity;
 
 @Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Recruiting { //구인 글 포스팅
+public class Recruiting extends BaseEntity { //구인 글 포스팅
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recruitingId;
@@ -33,16 +31,7 @@ public class Recruiting { //구인 글 포스팅
 
     private String context; //내용
 
-    @Column(updatable = false)
-    private LocalDateTime date;
-
-    @PrePersist // 생성 시점으로 자동 설정
-    public void prePersist() {
-        if (this.date == null) {
-            this.date = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
-                    .truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
-        }
-    }
+    // 생성 시점은 BaseEntity의 createdAt 필드 사용
 
     // 모집글 수정
     public void update(RecruitingDTO.RecruitingPatchReq req) {

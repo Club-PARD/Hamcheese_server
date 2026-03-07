@@ -1,13 +1,14 @@
 package pard.server.com.longkathon.portfolio;
 import jakarta.persistence.*;
 import lombok.*;
+import pard.server.com.longkathon.BaseEntity.BaseEntity;
 
 @Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Portfolio {
+public class Portfolio extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long portfolioId;

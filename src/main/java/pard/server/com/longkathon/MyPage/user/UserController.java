@@ -96,18 +96,21 @@ public class UserController {
         }
     }
 
-    //클릭한 게시물이 남의 게시물이면
-    @GetMapping("/mateProfile/{userId}") //메이트 프로필 페이지 리턴
+    //클릭한 게시물이 남의 게시물이면 (이제 이게 상페프로필 디폴트 값 - 자기소개 탭)
+    @GetMapping("/introduction/{userId}") // 상세프로필 자기소개 탭 리턴
     public UserDTO.UserRes1 mateProfile(@PathVariable Long userId) {
         return userService.readMateProfile(userId);
     }
 
-    //클릭한 게시물이 본인의 게시물이면
+    @GetMapping("/portfolio/{userId}") // 상세프로필 포트폴리오 탭 리턴
+    public
+
+    /*클릭한 게시물이 본인의 게시물이면
     @GetMapping("/myProfile") //마이 페이지 리턴
     public UserDTO.UserRes3 myProfile() {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
         return userService.readMyProfile(myId);
-    }
+    }*/
 
 //-------------------------마이 페이지---------------------------------------
 
