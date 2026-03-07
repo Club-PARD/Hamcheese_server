@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pard.server.com.longkathon.MyPage.user.User;
 import pard.server.com.longkathon.MyPage.user.UserRepo;
 import pard.server.com.longkathon.MyPage.user.UserService;
+import pard.server.com.longkathon.MyPage.userFile.UserFileService;
 import pard.server.com.longkathon.common.exception.ExpiredRefreshTokenException;
 import pard.server.com.longkathon.common.exception.InvalidJwtException;
 import pard.server.com.longkathon.common.exception.InvalidRefreshTokenException;
@@ -24,6 +25,7 @@ public class TokenService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepo userRepository;
+    private final UserFileService userFileService;
 
     // RefreshToken을 전달받아 새로운 AccessToken 생성
     public CreateAccessTokenResponse createNewAccessToken(String refreshToken) {
@@ -48,7 +50,15 @@ public class TokenService {
         // 5. AccessToken 생성
         String accessToken = tokenProvider.generateToken(user, Duration.ofMinutes(15));
 
-        // 6. isProfileCompleted 정보와 함께 반환
-        return new CreateAccessTokenResponse(accessToken, user.isProfileCompleted());
+        // 6. 프로필 사진 URL 조회 (캐시 적용됨)
+        String imageUrl = userFileService.getURL(user.getUserId());
+
+        // 7. 확장된 응답 반환
+        return new CreateAccessTokenResponse(
+                accessToken,
+                user.isProfileCompleted(),
+                user.getName(),    // User 엔티티에서 직접 (추가 쿼리 없음)
+                imageUrl           // UserFile 조회 (캐시 히트 시 쿼리 없음)
+        );
     }
 }

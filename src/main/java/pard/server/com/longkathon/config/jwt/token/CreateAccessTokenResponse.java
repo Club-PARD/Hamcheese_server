@@ -10,4 +10,6 @@ import lombok.Setter;
 public class CreateAccessTokenResponse {
     private String accessToken;
     private boolean isProfileCompleted;
+    private String name;          // 사용자 이름
+    private String imageUrl;      // 프로필 사진 URL
 }

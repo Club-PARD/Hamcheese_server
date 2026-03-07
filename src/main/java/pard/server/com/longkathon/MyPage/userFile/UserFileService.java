@@ -1,5 +1,7 @@
 package pard.server.com.longkathon.MyPage.userFile;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pard.server.com.longkathon.s3.AwsS3Service;
@@ -10,6 +12,7 @@ public class UserFileService {
     private final UserFileRepo userFileRepo;
     private final AwsS3Service awsS3Service;
 
+    @CacheEvict(value = "userProfileImages", key = "#userId")
     public void createImageFile (Long userId, String fileName) {
         //회원가입에서 유저가 생성됐을 때 그 사람의 프로필사진을 저장
         // fk로 사용될 userId와 파일명을 받아 저장한다.
@@ -20,6 +23,7 @@ public class UserFileService {
         userFileRepo.save(userFile); //저장
     }
 
+    @Cacheable(value = "userProfileImages", key = "#userId")
     public String getURL(Long userId) { //해당 유저의 프로필사진을 찾아 URL로 변환 후 리턴
         UserFile userFile = userFileRepo.findByUserId(userId);
         if (userFile == null) return null;
@@ -27,6 +31,7 @@ public class UserFileService {
     }
 
     @Transactional
+    @CacheEvict(value = "userProfileImages", key = "#userId")
     public void updateImageFile(Long userId) {
         UserFile userFile = userFileRepo.findByUserId(userId);
         if (userFile == null) return;
@@ -37,6 +42,7 @@ public class UserFileService {
     }
 
     @Transactional
+    @CacheEvict(value = "userProfileImages", key = "#userId")
     public void deleteImageFile(Long userId) {
         awsS3Service.deleteFile(userFileRepo.findByUserId(userId).getFileName());
         userFileRepo.deleteByUserId(userId);
