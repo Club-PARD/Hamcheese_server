@@ -19,6 +19,42 @@ public class UserController {
     private final AwsS3Service awsS3Service;
     private final UserFileService userFileService;
 
+    //회원가입에서 인적사항 입력
+    @PatchMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public UserDTO.UserRes2 createUser(
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+            @RequestPart("data") String dataJson
+    ) throws Exception {
+        UserDTO.UserReq1 userReq =
+                new ObjectMapper().readValue(dataJson, UserDTO.UserReq1.class);
+
+        String fileName = null; //사진을 안올릴것을 대비하여 일단 null처리
+
+        // 파일이 "존재하고", "비어있지 않을 때만" 업로드
+        if (profileImage != null && !profileImage.isEmpty()) {
+            fileName = awsS3Service.uploadFile(profileImage); //s3에 업로드
+        }
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
+        return userService.createUser(userReq, fileName, myId);
+    }
+
+//--------------------------둘러보기 페이지----------------------------------------
+
+    @GetMapping("/findAll") //메이트 둘러보기 페이지에서 모든 프로필 게시물 띄우기
+    public List<UserDTO.UserRes5> findAll() {
+        return userService.findAll();
+    }
+
+    @GetMapping("/filter") // 예: /user/filter?departments=컴공,전자&name=길동
+    public ResponseEntity<List<UserDTO.UserRes5>> filter(
+            @RequestParam(name = "departments", required = false) List<String> departments,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "firstStudentId", required = false) Long firstStudentId,
+            @RequestParam(name = "secondStudentId", required = false) Long secondStudentId
+    ) {
+        return ResponseEntity.ok(userService.filter(departments, name, firstStudentId, secondStudentId));
+    }
+//--------------------------------상세 프로필 페이지------------------------------------
     @GetMapping("/equal/{userId}") //프로필 게시글 클릭 시 본인 것인지 유무확인
     public boolean equal(@PathVariable String userId) {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
@@ -42,24 +78,7 @@ public class UserController {
         return userService.readMyProfile(myId);
     }
 
-    //회원가입에서 인적사항 입력
-    @PatchMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public UserDTO.UserRes2 createUser(
-            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-            @RequestPart("data") String dataJson
-    ) throws Exception {
-        UserDTO.UserReq1 userReq =
-                new ObjectMapper().readValue(dataJson, UserDTO.UserReq1.class);
-
-        String fileName = null; //사진을 안올릴것을 대비하여 일단 null처리
-
-        // 파일이 "존재하고", "비어있지 않을 때만" 업로드
-        if (profileImage != null && !profileImage.isEmpty()) {
-            fileName = awsS3Service.uploadFile(profileImage); //s3에 업로드
-        }
-        Long myId = AuthorizeUserId.getAuthorizedUserId();
-        return userService.createUser(userReq, fileName, myId);
-    }
+//-------------------------마이 페이지---------------------------------------
 
     @DeleteMapping("/myProfile") //프로필 사진 삭제
     public void deleteMyProfile() {
@@ -92,19 +111,6 @@ public class UserController {
     public UserDTO.UserRes4 myPeerReview() {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
         return userService.myPeerReview(myId);
-    }
-
-    @GetMapping("/findAll") //메이트 둘러보기 페이지에서 모든 프로필 게시물 띄우기
-    public List<UserDTO.UserRes5> findAll() {
-        return userService.findAll();
-    }
-
-    @GetMapping("/filter") // 예: /user/filter?departments=컴공,전자&name=길동
-    public ResponseEntity<List<UserDTO.UserRes5>> filter(
-            @RequestParam(name = "departments", required = false) List<String> departments,
-            @RequestParam(name = "name", required = false) String name
-    ) {
-        return ResponseEntity.ok(userService.filter(departments, name));
     }
 
     @GetMapping("/firstPage")//첫 서비스 소개글 페이지에 띄울 profileFeedList,recruitingFeedList

@@ -219,28 +219,36 @@ public class UserService {
     }
 
     @Transactional
-    public List<UserDTO.UserRes5> filter(List<String> department, String name) {
+    public List<UserDTO.UserRes5> filter(List<String> departments, String name, Long firstStudentId, Long secondStudentId) {
 
-        boolean hasDept = department != null && !department.isEmpty();
+        boolean hasDept = departments != null && !departments.isEmpty();
         boolean hasName = name != null && !name.isBlank();
+        boolean hasStudentRange = firstStudentId != null && secondStudentId != null;
 
         List<User> users;
 
-        // 1) department + name 둘 다 있을 때
-        if (hasDept && hasName) {
-            users = userRepo.findByDepartmentInAndNameContaining(department, name);
-
-            // 2) department만 있을 때
+        if (hasDept && hasName && hasStudentRange) {
+            users = userRepo.findByDepartmentInAndNameContainingAndStudentIdBetween(
+                    departments, name, firstStudentId, secondStudentId
+            );
+        } else if (hasDept && hasName) {
+            users = userRepo.findByDepartmentInAndNameContaining(departments, name);
+        } else if (hasDept && hasStudentRange) {
+            users = userRepo.findByDepartmentInAndStudentIdBetween(
+                    departments, firstStudentId, secondStudentId
+            );
+        } else if (hasName && hasStudentRange) {
+            users = userRepo.findByNameContainingAndStudentIdBetween(
+                    name, firstStudentId, secondStudentId
+            );
         } else if (hasDept) {
-            users = userRepo.findByDepartmentIn(department);
-
-            // 3) name만 있을 때
+            users = userRepo.findByDepartmentIn(departments);
         } else if (hasName) {
             users = userRepo.findByNameContaining(name);
-
-            // 4) 둘 다 없을 때(필터 없음) -> 전체 or 최신순 등 너 정책대로
+        } else if (hasStudentRange) {
+            users = userRepo.findByStudentIdBetween(firstStudentId, secondStudentId);
         } else {
-            users = userRepo.findAll(); // 또는 findAllByOrderByUserIdDesc()
+            users = userRepo.findAll();
         }
 
         if (users.isEmpty()) return List.of();
