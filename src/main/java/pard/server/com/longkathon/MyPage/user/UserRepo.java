@@ -48,4 +48,10 @@ public interface UserRepo extends JpaRepository<User, Long> {
             Long startStudentId,
             Long endStudentId
     );
+
+    // 고학번 순 정렬 (studentId 오름차순: 낮은 값 = 고학번)
+    List<User> findAllByOrderByStudentIdAsc();
+
+    // 저학번 순 정렬 (studentId 내림차순: 높은 값 = 저학번)
+    List<User> findAllByOrderByStudentIdDesc();
 }

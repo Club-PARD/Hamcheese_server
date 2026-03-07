@@ -47,9 +47,19 @@ public class UserController {
         return userService.findAll();
     }
 
-    @GetMapping("/popularOrder") // 찜 많이 받은 순.
-    public List<UserDTO.UserRes5> findPopular() {
+    @GetMapping("/popularOrder") // 인기순핕터. 찜 많이 받은 유저 순.
+    public ResponseEntity<List<UserDTO.UserRes5>> findPopular() {
+        return ResponseEntity.ok(userService.popularOrder());
+    }
 
+    @GetMapping("/highStudentIdOrder") // 고학번 순 필터
+    public ResponseEntity<List<UserDTO.UserRes5>> findHighest() {
+        return ResponseEntity.ok(userService.findHighest());
+    }
+
+    @GetMapping("/lowStudentIdOrder") // 저학번 순 필터
+    public ResponseEntity<List<UserDTO.UserRes5>> findLowest() {
+        return ResponseEntity.ok(userService.findLowest());
     }
 
     @GetMapping("/filter") // 예: /user/filter?departments=컴공,전자&name=길동

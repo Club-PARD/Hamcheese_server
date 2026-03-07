@@ -305,6 +305,42 @@ public class UserService {
                 .toList();
     }
 
+    public List<UserDTO.UserRes5> findHighest(){ // 고학번 순 (studentId 오름차순)
+        List<User> users = userRepo.findAllByOrderByStudentIdAsc();
+
+        return users.stream().map(user ->
+                UserDTO.UserRes5.builder()
+                        .userId(user.getUserId())
+                        .name(user.getName())
+                        .firstMajor(user.getFirstMajor())
+                        .secondMajor(user.getSecondMajor())
+                        .studentId(user.getStudentId())
+                        .introduction(introductionService.read(user.getUserId()))
+                        .skillList(skillStackListService.read(user.getUserId()))
+                        .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
+                        .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
+                        .imageUrl(userFileService.getURL(user.getUserId()))
+                        .build()).toList();
+    }
+
+    public List<UserDTO.UserRes5> findLowest(){ // 저학번 순 (studentId 내림차순)
+        List<User> users = userRepo.findAllByOrderByStudentIdDesc();
+
+        return users.stream().map(user ->
+                UserDTO.UserRes5.builder()
+                        .userId(user.getUserId())
+                        .name(user.getName())
+                        .firstMajor(user.getFirstMajor())
+                        .secondMajor(user.getSecondMajor())
+                        .studentId(user.getStudentId())
+                        .introduction(introductionService.read(user.getUserId()))
+                        .skillList(skillStackListService.read(user.getUserId()))
+                        .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
+                        .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
+                        .imageUrl(userFileService.getURL(user.getUserId()))
+                        .build()).toList();
+    }
+
 //------------------- AT 발급 ------------------------------
     //JWT에서 RefreshToken으로 새로운 AccessToken을 생성할때 사용
     public User findByEmail(String email) {
