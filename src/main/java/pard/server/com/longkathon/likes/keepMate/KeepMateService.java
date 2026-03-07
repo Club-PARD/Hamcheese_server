@@ -3,6 +3,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class KeepMateService {
@@ -14,5 +16,13 @@ public class KeepMateService {
                 .keepUserId(keepUserId)
                 .build();
         keepMateRepository.save(keepMate);
+    }
+
+    public void deleteKeepMate(Long userId, Long keepUserId){ //메이트 찜하기 삭제
+        keepMateRepository.deleteByUserIdAndKeepUserId(userId, keepUserId);
+    }
+
+    public List<Long> findMostPopularUserId(){
+        return keepMateRepository.findMostPopularUserId();
     }
 }

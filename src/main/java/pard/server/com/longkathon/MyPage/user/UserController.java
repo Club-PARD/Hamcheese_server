@@ -42,9 +42,14 @@ public class UserController {
 
 //--------------------------둘러보기 페이지----------------------------------------
 
-    @GetMapping("/findAll") //메이트 둘러보기 페이지에서 모든 프로필 게시물 띄우기
+    @GetMapping("/defaultOrder") //메이트 둘러보기 페이지에서 모든 프로필 게시물 띄우기
     public List<UserDTO.UserRes5> findAll() {
         return userService.findAll();
+    }
+
+    @GetMapping("/popularOrder") // 찜 많이 받은 순.
+    public List<UserDTO.UserRes5> findPopular() {
+
     }
 
     @GetMapping("/filter") // 예: /user/filter?departments=컴공,전자&name=길동
@@ -61,6 +66,13 @@ public class UserController {
     public ResponseEntity<Void> keepMate(@PathVariable Long userId) {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
         keepMateService.createKeepMate(myId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/keepMate") // 찜한 사용자 삭제
+    public ResponseEntity<Void> keepMateDelete(@PathVariable Long userId) {
+        Long myId = AuthorizeUserId.getAuthorizedUserId();
+        keepMateService.deleteKeepMate(myId, userId);
         return ResponseEntity.noContent().build();
     }
 //--------------------------------상세 프로필 페이지------------------------------------

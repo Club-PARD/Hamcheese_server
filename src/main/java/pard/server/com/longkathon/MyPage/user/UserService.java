@@ -11,6 +11,7 @@ import pard.server.com.longkathon.MyPage.skillStackList.SkillStackListRepo;
 import pard.server.com.longkathon.MyPage.skillStackList.SkillStackListService;
 import pard.server.com.longkathon.MyPage.userFile.UserFileService;
 import lombok.extern.slf4j.Slf4j;
+import pard.server.com.longkathon.likes.keepMate.KeepMateService;
 import pard.server.com.longkathon.posting.myKeyword.MyKeywordService;
 import pard.server.com.longkathon.posting.recruiting.Recruiting;
 import pard.server.com.longkathon.posting.recruiting.RecruitingDTO;
@@ -32,6 +33,7 @@ public class UserService {
     private final UserFileService userFileService;
     private final RecruitingRepo recruitingRepo;
     private final MyKeywordService myKeywordService;
+    private final KeepMateService keepMateService;
 
     @Transactional
     public UserDTO.UserRes2 createUser(UserDTO.UserReq1 userReq, String fileName, Long myId) { //회원가입에서 받은 인적사항으로 유저를 생성
@@ -158,25 +160,6 @@ public class UserService {
                 .build();
     }
 
-    public List<UserDTO.UserRes5> findAll(){ //메이트 둘러보기 탭에 띄울 모든 자기소개 게시물들
-        List<User> users = userRepo.findAll();
-
-        return users.stream().map(user ->
-                UserDTO.UserRes5.builder()
-                        .userId(user.getUserId())
-                        .name(user.getName())
-                        .firstMajor(user.getFirstMajor())
-                        .secondMajor(user.getSecondMajor())
-                        .studentId(user.getStudentId())
-                        .introduction(introductionService.read(user.getUserId()))
-                        .skillList(skillStackListService.read(user.getUserId()))
-                        .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
-                        .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
-                        .imageUrl(userFileService.getURL(user.getUserId()))
-                        .build()).toList();
-
-    }
-
     public UserDTO.UserRes6 firstPage(){
         List<User> users = userRepo.findRandom3();
         List<Recruiting> recruitings = recruitingRepo.findRandom3();
@@ -216,6 +199,26 @@ public class UserService {
                 .profileFeedList(profileFeedList)
                 .recruitingFeedList(recruitingFeedList)
                 .build();
+    }
+
+//----------------------둘러보기 페이지 띄울 유저 정보들 --------------------------
+    public List<UserDTO.UserRes5> findAll(){ //메이트 둘러보기 탭에 띄울 모든 자기소개 게시물들
+        List<User> users = userRepo.findAll();
+
+        return users.stream().map(user ->
+                UserDTO.UserRes5.builder()
+                        .userId(user.getUserId())
+                        .name(user.getName())
+                        .firstMajor(user.getFirstMajor())
+                        .secondMajor(user.getSecondMajor())
+                        .studentId(user.getStudentId())
+                        .introduction(introductionService.read(user.getUserId()))
+                        .skillList(skillStackListService.read(user.getUserId()))
+                        .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
+                        .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
+                        .imageUrl(userFileService.getURL(user.getUserId()))
+                        .build()).toList();
+
     }
 
     @Transactional
@@ -280,14 +283,31 @@ public class UserService {
                 .toList();
     }
 
-    //JWT에서 RefreshToken으로 새로운 AccessToken을 생성할때 사용
-    public User findById(Long userId) {
-        return userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+    public List<UserDTO.UserRes5> popularOrder(){
+        List<Long> userIdList = keepMateService.findMostPopularUserId();
+
+        // userIdList의 순서대로 User 조회 후 DTO 변환 (인기순 순서 유지)
+        return userIdList.stream()
+                .map(userId -> userRepo.findById(userId).orElse(null)) // 각 userId로 User 조회
+                .filter(Objects::nonNull) // 존재하지 않는 User는 필터링
+                .map(user -> UserDTO.UserRes5.builder()
+                        .userId(user.getUserId())
+                        .name(user.getName())
+                        .firstMajor(user.getFirstMajor())
+                        .secondMajor(user.getSecondMajor())
+                        .studentId(user.getStudentId())
+                        .introduction(introductionService.read(user.getUserId()))
+                        .skillList(skillStackListService.read(user.getUserId()))
+                        .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
+                        .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
+                        .imageUrl(userFileService.getURL(user.getUserId()))
+                        .build())
+                .toList();
     }
 
+//------------------- AT 발급 ------------------------------
+    //JWT에서 RefreshToken으로 새로운 AccessToken을 생성할때 사용
     public User findByEmail(String email) {
         return userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
-
-
 }
