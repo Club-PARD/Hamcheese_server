@@ -106,9 +106,14 @@ public class UserController {
         return ResponseEntity.ok(userService.readMateProfile(userId));
     }
 
-    @GetMapping("/portfolio/{userId}") // 상세프로필 포트폴리오 탭 리턴
-    public ResponseEntity<List<PortfolioDTO.Res1>> getPortfolioTab(@PathVariable Long userId) {
-        return ResponseEntity.ok(portfolioService.getPortfolioInProfile(userId));
+    @GetMapping("/portfolioPostOrder/{userId}") // 상세프로필 포트폴리오 탭 리턴 (등록최신순)
+    public ResponseEntity<List<PortfolioDTO.Res1>> getPortfolioTabPostOrder(@PathVariable Long userId) {
+        return ResponseEntity.ok(portfolioService.getPortfolioTabPostOrder(userId));
+    }
+
+    @GetMapping("/portfolioRealOrder/{userId}") // 상세프로필 포트폴리오 탭 리턴 (실제 프로젝트 시간 순)
+    public ResponseEntity<List<PortfolioDTO.Res1>> getPortfolioTabRealOrder(@PathVariable Long userId) {
+        return ResponseEntity.ok(portfolioService.getPortfolioTabRealOrder(userId));
     }
 
     /*클릭한 게시물이 본인의 게시물이면

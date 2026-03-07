@@ -3,6 +3,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import pard.server.com.longkathon.BaseEntity.BaseEntity;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @AllArgsConstructor
@@ -21,7 +23,7 @@ public class Portfolio extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String description; //포폴 설명글
 
-    private String startDate; //진행기간의 시작 시점
+    private LocalDateTime startDate; //진행기간의 시작 시점
 
-    private String endDate; //진행 기간의 종료 시점
+    private LocalDateTime endDate; //진행 기간의 종료 시점
 }
