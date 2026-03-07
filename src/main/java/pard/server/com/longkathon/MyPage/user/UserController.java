@@ -26,7 +26,7 @@ public class UserController {
 
     //회원가입에서 인적사항 입력
     @PatchMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public UserDTO.UserRes2 createUser(
+    public ResponseEntity<UserDTO.UserRes2> createUser(
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
             @RequestPart("data") String dataJson
     ) throws Exception {
@@ -40,7 +40,8 @@ public class UserController {
             fileName = awsS3Service.uploadFile(profileImage); //s3에 업로드
         }
         Long myId = AuthorizeUserId.getAuthorizedUserId();
-        return userService.createUser(userReq, fileName, myId);
+        UserDTO.UserRes2 result = userService.createUser(userReq, fileName, myId);
+        return ResponseEntity.ok(result);
     }
 
 //--------------------------둘러보기 페이지----------------------------------------
@@ -120,13 +121,14 @@ public class UserController {
 //-------------------------마이 페이지---------------------------------------
 
     @DeleteMapping("/myProfile") //프로필 사진 삭제
-    public void deleteMyProfile() {
+    public ResponseEntity<Void> deleteMyProfile() {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
         userFileService.deleteImageFile(myId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping(value = "/updateImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateImage(
+    public ResponseEntity<Void> updateImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage
     ) {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
@@ -137,6 +139,7 @@ public class UserController {
             fileName = awsS3Service.uploadFile(profileImage); // 새 사진 aws 업로드
             userFileService.createImageFile(myId, fileName); //db에 파일 이름 유지
         }
+        return ResponseEntity.ok().build();
     }
     //내 프로필 수정
     @PatchMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -147,18 +150,20 @@ public class UserController {
     }
 
     @GetMapping("/myPeerReview") //내 동료평가 탭에 띄울 동료평가들을 가져온다
-    public UserDTO.UserRes4 myPeerReview() {
+    public ResponseEntity<UserDTO.UserRes4> myPeerReview() {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
-        return userService.myPeerReview(myId);
+        UserDTO.UserRes4 result = userService.myPeerReview(myId);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/firstPage")//첫 서비스 소개글 페이지에 띄울 profileFeedList,recruitingFeedList
-    public UserDTO.UserRes6 firstPage() {
-        return userService.firstPage();
+    public ResponseEntity<UserDTO.UserRes6> firstPage() {
+        UserDTO.UserRes6 result = userService.firstPage();
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/tokenTest") //테스트 코드
-    public String test(){
-        return "Test!!!";
+    public ResponseEntity<String> test(){
+        return ResponseEntity.ok("Test!!!");
     }
 }

@@ -92,14 +92,14 @@ public class UserService {
                 // 3. 활동내역 섹션 (✅ 변수 사용)
                 .activity(activityList)
 
-                // 4. 동료평가 섹션 (좋아요 많은순)
+                /*// 4. 동료평가 섹션 (좋아요 많은순)
                 .peerGoodKeyword(peerReviewService.goodKeyword(userId))
                 .goodKeywordCount(peerReviewService.goodKeywordCount(userId))
                 .peerBadKeyword(peerReviewService.BadKeyword(userId))
                 .badKeywordCount(peerReviewService.badKeywordCount(userId))
 
                 // 5. 동료평가 섹션 (최신순)
-                .peerReviewRecent(peerReviewService.readRecentPeerReview(userId))
+                .peerReviewRecent(peerReviewService.readRecentPeerReview(userId))*/
                 .build();
 
         // ✅ DTO에 실제로 들어갔는지도 확인
