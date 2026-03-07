@@ -25,6 +25,8 @@ public class User extends BaseEntity {
 
     private boolean isProfileCompleted;
 
+    private int point;
+
     //프로필 수정
     public void updateMyprofile (UserDTO.UserRes3 userRes) {
         this.name = userRes.getName();
