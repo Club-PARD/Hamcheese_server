@@ -25,10 +25,11 @@ public class ChatRoom extends BaseEntity {
 
     private Long userId;
 
-    private Long sellerId;
+    @Column(name = "sellerId")  // DB 컬럼명은 sellerId 유지
+    private Long partnerId;     // 코드에서는 partnerId 사용
 
-    public ChatRoom(Long userId, Long sellerId) {
+    public ChatRoom(Long userId, Long partnerId) {
         this.userId = userId;
-        this.sellerId = sellerId;
+        this.partnerId = partnerId;
     }
 }

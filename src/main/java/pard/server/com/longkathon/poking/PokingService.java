@@ -7,9 +7,12 @@ import pard.server.com.longkathon.MyPage.user.UserRepo;
 import pard.server.com.longkathon.MyPage.userFile.UserFileService;
 import pard.server.com.longkathon.alarm.Alarm;
 import pard.server.com.longkathon.alarm.AlarmRepo;
+import pard.server.com.longkathon.config.webSocket.chatRoom.ChatRoomService;
+import pard.server.com.longkathon.config.webSocket.dto.ChatRoomResponse;
 import pard.server.com.longkathon.posting.recruiting.Recruiting;
 import pard.server.com.longkathon.posting.recruiting.RecruitingRepo;
 import pard.server.com.longkathon.posting.recruiting.RecruitingService;
+import pard.server.com.longkathon.util.TimeUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -29,6 +32,7 @@ public class PokingService {
     private final RecruitingService recruitingService;
     private final UserFileService userFileService;
     private final AlarmRepo alarmRepo;
+    private final ChatRoomService chatRoomService;
 
     /**
      * UserDTO에서 사용: 특정 유저(받는 사람)가 받은 모든 찌르기를 DTO 리스트로 반환
@@ -187,34 +191,12 @@ public class PokingService {
     }
 
 
-    private String toRelativeTime(LocalDateTime date) { // 시간 ~전 으로 표시
-        if (date == null) return null;
-
-        LocalDateTime now = LocalDateTime.now(); // 서버 기준 시간
-        Duration d = Duration.between(date, now);
-
-        long seconds = d.getSeconds();
-        if (seconds < 0) seconds = 0;
-
-        if (seconds < 60) return "방금전";
-
-        long minutes = seconds / 60;
-        if (minutes < 60) return minutes + "분전";
-
-        long hours = minutes / 60;
-        if (hours < 24) return hours + "시간전";
-
-        long days = hours / 24;
-        if (days < 7) return days + "일전";
-
-        long weeks = days / 7;
-        if (weeks < 5) return weeks + "주전";
-
-        long months = days / 30;
-        if (months < 12) return months + "개월전";
-
-        long years = days / 365;
-        return years + "년전";
+    /**
+     * @deprecated TimeUtils.toRelativeTime()을 사용하세요
+     */
+    @Deprecated
+    public String toRelativeTime(LocalDateTime date) {
+        return TimeUtils.toRelativeTime(date);
     }
 
     @Transactional
@@ -247,26 +229,50 @@ public class PokingService {
     }
 
     @Transactional //삭제 할때 수락, 거절 여부에 따라 알림을 생성한다.
-    public void delete(Long pokingId, PokingReq pokingReq) {
-        Poking poking = pokingRepo.findById(pokingId).get(); //헤당 찌르기를 찾아서
-        User sender = userRepo.findById(poking.getReceiveId()).get(); // 찌르기를 받는 사람이 알림을 보내는사람이 된다.
-        User receiver = userRepo.findById(poking.getSendId()).get(); //찌르기를 보내는 사람이 알림을 받는 사람이된다.
+    public PokingRes.PokingResponseResult delete(Long pokingId, PokingReq pokingReq) {
+        Poking poking = pokingRepo.findById(pokingId)
+            .orElseThrow(() -> new IllegalArgumentException("POKING_NOT_FOUND"));
 
-        if (pokingReq.isOk()){ // 수락이면
+        User sender = userRepo.findById(poking.getReceiveId()).get();
+        User receiver = userRepo.findById(poking.getSendId()).get();
+
+        Long chatRoomId = null;
+        String message;
+
+        if (pokingReq.isOk()) {
+            // 수락: 채팅방 생성 (기존 채팅방이 있으면 재사용)
+            ChatRoomResponse chatRoom = chatRoomService.createChatRoom(
+                poking.getReceiveId(),
+                poking.getSendId()
+            );
+            chatRoomId = chatRoom.getChatRoomId();
+            message = "대화가 시작되었습니다.";
+
+            // 수락 알림
             Alarm alarm = Alarm.builder()
-                    .senderId(sender.getUserId())
-                    .receiverId(receiver.getUserId())
-                    .ok(pokingReq.isOk())
-                    .build();
+                .senderId(sender.getUserId())
+                .receiverId(receiver.getUserId())
+                .ok(true)
+                .build();
             alarmRepo.save(alarm);
-        }else{
+        } else {
+            // 거절
+            message = "다음 기회에 대화해요.";
+
             Alarm alarm = Alarm.builder()
-                    .senderId(sender.getUserId())
-                    .receiverId(receiver.getUserId())
-                    .ok(pokingReq.isOk())
-                    .build();
+                .senderId(sender.getUserId())
+                .receiverId(receiver.getUserId())
+                .ok(false)
+                .build();
             alarmRepo.save(alarm);
         }
+
         pokingRepo.deleteById(pokingId);
+
+        return PokingRes.PokingResponseResult.builder()
+            .accepted(pokingReq.isOk())
+            .chatRoomId(chatRoomId)
+            .message(message)
+            .build();
     }
 }

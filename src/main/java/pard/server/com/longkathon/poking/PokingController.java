@@ -43,9 +43,8 @@ public class PokingController {
         return ResponseEntity.ok(pokingService.received(myId));
     }
 
-    @DeleteMapping("/{pokingId}")
-    public ResponseEntity<Void> delete(@PathVariable Long pokingId, @RequestBody PokingReq pokingReq) {
-        pokingService.delete(pokingId, pokingReq);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{pokingId}") //다음 기회에 버튼
+    public ResponseEntity<PokingRes.PokingResponseResult> delete(@PathVariable Long pokingId, @RequestBody PokingReq pokingReq) {
+        return ResponseEntity.ok(pokingService.delete(pokingId, pokingReq));
     }
 }

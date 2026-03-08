@@ -37,4 +37,14 @@ public class PokingRes {
         private String reason; // OK / SELF / ALREADY_POKED / USER_NOT_FOUND
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PokingResponseResult {
+        private boolean accepted;       // 수락 여부
+        private Long chatRoomId;       // 수락 시 생성된 채팅방 ID (거절 시 null)
+        private String message;        // 응답 메시지
+    }
+
 }

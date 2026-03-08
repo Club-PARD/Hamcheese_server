@@ -10,14 +10,14 @@ import java.util.List;
 public class ChatRoomResponse {
     private Long chatRoomId;
     private Long userId;
-    private Long sellerId;
+    private Long partnerId;
     private List<ChatMessageResponse> messages;
 
     public static ChatRoomResponse fromEntity(ChatRoom chatRoom, List<ChatMessageResponse> messages) {
         return new ChatRoomResponse(
                 chatRoom.getId(),
                 chatRoom.getUserId(),
-                chatRoom.getSellerId(),
+                chatRoom.getPartnerId(),
                 messages
         );
     }

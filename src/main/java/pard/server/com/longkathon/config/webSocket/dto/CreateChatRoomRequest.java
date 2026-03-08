@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CreateChatRoomRequest {
-    private Long sellerId;
+    private Long partnerId;
 }
