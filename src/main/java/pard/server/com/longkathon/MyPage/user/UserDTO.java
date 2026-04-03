@@ -26,7 +26,7 @@ public class UserDTO {
         private String firstMajor;
         private String secondMajor;
         private String gpa;
-        private int studentId;
+        private Long studentId;
         private String semester;
         private String imageUrl;
         private String grade;
@@ -75,7 +75,7 @@ public class UserDTO {
         private String firstMajor;
         private String secondMajor;
         private String gpa;
-        private int studentId;
+        private Long studentId;
         private String grade;
         private String semester;
         private String imageUrl;
@@ -117,7 +117,7 @@ public class UserDTO {
         private String name;
         private String firstMajor;
         private String secondMajor;
-        private int studentId;
+        private Long studentId;
         private String introduction;
 
         @Builder.Default
@@ -149,7 +149,7 @@ public class UserDTO {
     @NoArgsConstructor
     public static class UserReq1{ //회원가입할때 받는 유저 정보
         private String name;
-        private int studentId;
+        private Long studentId;
         private String grade;
         private String semester;
         private String department;

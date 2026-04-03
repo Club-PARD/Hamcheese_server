@@ -23,7 +23,7 @@ public class ChatRoomDetailResponse {
     public static class PartnerInfo {
         private Long userId;
         private String name;
-        private int studentId;      // 학번
+        private Long studentId;      // 학번
         private String imageUrl;
         private String firstMajor;
         private String secondMajor;

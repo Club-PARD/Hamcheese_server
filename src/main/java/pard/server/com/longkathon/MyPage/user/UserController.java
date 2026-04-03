@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import pard.server.com.longkathon.MyPage.userFile.UserFileService;
 import pard.server.com.longkathon.common.dto.PointsDTO;
 import pard.server.com.longkathon.likes.keepMate.KeepMateService;
-import pard.server.com.longkathon.portfolio.PortfolioDTO;
 import pard.server.com.longkathon.portfolio.PortfolioService;
 import pard.server.com.longkathon.s3.AwsS3Service;
 
@@ -109,16 +108,6 @@ public class UserController {
         return ResponseEntity.ok(userService.readMateProfile(userId));
     }
 
-    @GetMapping("/portfolioPostOrder/{userId}") // 상세프로필 포트폴리오 탭 리턴 (등록최신순)
-    public ResponseEntity<List<PortfolioDTO.Res1>> getPortfolioTabPostOrder(@PathVariable Long userId) {
-        return ResponseEntity.ok(portfolioService.getPortfolioTabPostOrder(userId));
-    }
-
-    @GetMapping("/portfolioRealOrder/{userId}") // 상세프로필 포트폴리오 탭 리턴 (실제 프로젝트 시간 순)
-    public ResponseEntity<List<PortfolioDTO.Res1>> getPortfolioTabRealOrder(@PathVariable Long userId) {
-        return ResponseEntity.ok(portfolioService.getPortfolioTabRealOrder(userId));
-    }
-
     @GetMapping("/peerReview/{userId}") // 상세 프로필 동료평가 탭 (많이 받은순, 최신순 둘다 한번에 리턴)
     public ResponseEntity<UserDTO.UserRes4> getPeerReviewTab(@PathVariable Long userId) {
         UserDTO.UserRes4 result = userService.myPeerReview(userId);
@@ -198,7 +187,7 @@ public class UserController {
         UserDTO.UserRes4 result = userService.myPeerReview(myId);
         return ResponseEntity.ok(result);
     }
-
+//---------------------------------------------------------------------------------------------------
     @GetMapping("/firstPage")//첫 서비스 소개글 페이지에 띄울 profileFeedList,recruitingFeedList
     public ResponseEntity<UserDTO.UserRes6> firstPage() {
         UserDTO.UserRes6 result = userService.firstPage();
