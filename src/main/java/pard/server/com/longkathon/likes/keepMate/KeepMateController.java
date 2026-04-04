@@ -14,22 +14,12 @@ public class KeepMateController {
     private final KeepMateService keepMateService;
 
     /**
-     * 메이트 찜하기 추가
+     * 메이트 찜하기 토글 (추가/취소)
      * POST /keepMate/{keepUserId}
      */
     @PostMapping("/{keepUserId}")
-    public ResponseEntity<KeepMateDTO.Response> createKeepMate(@PathVariable Long keepUserId) {
-        KeepMateDTO.Response response = keepMateService.createKeepMate(keepUserId);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * 메이트 찜하기 삭제
-     * DELETE /keepMate/{keepUserId}
-     */
-    @DeleteMapping("/{keepUserId}")
-    public ResponseEntity<KeepMateDTO.Response> deleteKeepMate(@PathVariable Long keepUserId) {
-        KeepMateDTO.Response response = keepMateService.deleteKeepMate(keepUserId);
+    public ResponseEntity<KeepMateDTO.Response> toggleKeepMate(@PathVariable Long keepUserId) {
+        KeepMateDTO.Response response = keepMateService.toggleKeepMate(keepUserId);
         return ResponseEntity.ok(response);
     }
 

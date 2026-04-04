@@ -17,22 +17,12 @@ public class PortfolioLikeController {
     private final PortfolioService portfolioService;
 
     /**
-     * 포트폴리오 좋아요 추가
+     * 포트폴리오 좋아요 토글 (추가/취소)
      * POST /portfolioLike/{portfolioId}
      */
     @PostMapping("/{portfolioId}")
-    public ResponseEntity<PortfolioLikeDTO.Response> createLike(@PathVariable Long portfolioId) {
-        PortfolioLikeDTO.Response response = portfolioLikeService.createPortfolioLike(portfolioId);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * 포트폴리오 좋아요 삭제
-     * DELETE /portfolioLike/{portfolioId}
-     */
-    @DeleteMapping("/{portfolioId}")
-    public ResponseEntity<PortfolioLikeDTO.Response> deleteLike(@PathVariable Long portfolioId) {
-        PortfolioLikeDTO.Response response = portfolioLikeService.deletePortfolioLike(portfolioId);
+    public ResponseEntity<PortfolioLikeDTO.Response> toggleLike(@PathVariable Long portfolioId) {
+        PortfolioLikeDTO.Response response = portfolioLikeService.togglePortfolioLike(portfolioId);
         return ResponseEntity.ok(response);
     }
 

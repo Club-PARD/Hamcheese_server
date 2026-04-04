@@ -6,8 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pard.server.com.longkathon.MyPage.user.AuthorizeUserId;
 import pard.server.com.longkathon.MyPage.user.UserDTO;
 import pard.server.com.longkathon.MyPage.user.UserRepo;
-import pard.server.com.longkathon.common.exception.DuplicateLikeException;
-import pard.server.com.longkathon.common.exception.LikeNotFoundException;
 import pard.server.com.longkathon.common.exception.UserNotFoundException;
 import pard.server.com.longkathon.MyPage.introduction.IntroductionService;
 import pard.server.com.longkathon.MyPage.skillStackList.SkillStackListService;
@@ -28,59 +26,43 @@ public class KeepMateService {
     private final UserFileService userFileService;
 
     /**
-     * 메이트 찜하기 생성
+     * 메이트 찜하기 토글 (추가/취소)
      */
     @Transactional
-    public KeepMateDTO.Response createKeepMate(Long keepUserId) {
-        // 1. 로그인된 사용자 ID 획득
+    public KeepMateDTO.Response toggleKeepMate(Long keepUserId) {
+        // 1. 인증된 사용자 ID 획득
         Long userId = AuthorizeUserId.getAuthorizedUserId();
 
-        // 2. 찜하려는 사용자 존재 여부 확인
+        // 2. 찜하려는 사용자 존재 확인
         if (!userRepo.existsById(keepUserId)) {
             throw new UserNotFoundException("찜하려는 사용자를 찾을 수 없습니다. ID: " + keepUserId);
         }
 
-        // 3. 중복 확인
+        // 3. 찜하기 여부에 따라 생성/삭제
+        boolean isKeepMate;
+        String message;
+
         if (keepMateRepository.existsByUserIdAndKeepUserId(userId, keepUserId)) {
-            throw new DuplicateLikeException("이미 찜한 메이트입니다.");
+            // 찜하기 취소
+            keepMateRepository.deleteByUserIdAndKeepUserId(userId, keepUserId);
+            isKeepMate = false;
+            message = "메이트 찜하기가 취소되었습니다.";
+        } else {
+            // 찜하기 추가
+            KeepMate keepMate = KeepMate.builder()
+                    .userId(userId)
+                    .keepUserId(keepUserId)
+                    .build();
+            keepMateRepository.save(keepMate);
+            isKeepMate = true;
+            message = "메이트 찜하기가 추가되었습니다.";
         }
-
-        // 4. 찜하기 생성
-        KeepMate keepMate = KeepMate.builder()
-                .userId(userId)
-                .keepUserId(keepUserId)
-                .build();
-        keepMateRepository.save(keepMate);
-
-        // 5. 응답 생성
-        return KeepMateDTO.Response.builder()
-                .keepUserId(keepUserId)
-                .isKeepMate(true)
-                .message("메이트 찜하기가 추가되었습니다.")
-                .build();
-    }
-
-    /**
-     * 메이트 찜하기 삭제
-     */
-    @Transactional
-    public KeepMateDTO.Response deleteKeepMate(Long keepUserId) {
-        // 1. 로그인된 사용자 ID 획득
-        Long userId = AuthorizeUserId.getAuthorizedUserId();
-
-        // 2. 존재 여부 확인
-        if (!keepMateRepository.existsByUserIdAndKeepUserId(userId, keepUserId)) {
-            throw new LikeNotFoundException("찜하기 기록을 찾을 수 없습니다.");
-        }
-
-        // 3. 찜하기 삭제
-        keepMateRepository.deleteByUserIdAndKeepUserId(userId, keepUserId);
 
         // 4. 응답 생성
         return KeepMateDTO.Response.builder()
                 .keepUserId(keepUserId)
-                .isKeepMate(false)
-                .message("메이트 찜하기가 취소되었습니다.")
+                .isKeepMate(isKeepMate)
+                .message(message)
                 .build();
     }
 

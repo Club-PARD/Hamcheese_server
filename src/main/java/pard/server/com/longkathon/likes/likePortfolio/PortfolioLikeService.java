@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pard.server.com.longkathon.MyPage.user.AuthorizeUserId;
-import pard.server.com.longkathon.common.exception.DuplicateLikeException;
-import pard.server.com.longkathon.common.exception.LikeNotFoundException;
 import pard.server.com.longkathon.common.exception.PortfolioNotFoundException;
 import pard.server.com.longkathon.portfolio.PortfolioRepository;
 
@@ -16,63 +14,45 @@ public class PortfolioLikeService {
     private final PortfolioRepository portfolioRepository;
 
     /**
-     * 포트폴리오 좋아요 생성
+     * 포트폴리오 좋아요 토글 (추가/취소)
      */
     @Transactional
-    public PortfolioLikeDTO.Response createPortfolioLike(Long portfolioId) {
-        // 1. 로그인된 사용자 ID 획득
+    public PortfolioLikeDTO.Response togglePortfolioLike(Long portfolioId) {
+        // 1. 인증된 사용자 ID 획득
         Long userId = AuthorizeUserId.getAuthorizedUserId();
 
-        // 2. Portfolio 존재 여부 확인
+        // 2. Portfolio 존재 확인
         if (!portfolioRepository.existsById(portfolioId)) {
             throw new PortfolioNotFoundException("포트폴리오를 찾을 수 없습니다. ID: " + portfolioId);
         }
 
-        // 3. 중복 확인
+        // 3. 좋아요 여부에 따라 생성/삭제
+        boolean isLiked;
+        String message;
+
         if (portfolioLikeRepository.existsByUserIdAndPortfolioId(userId, portfolioId)) {
-            throw new DuplicateLikeException("이미 좋아요를 누른 포트폴리오입니다.");
+            // 좋아요 취소
+            portfolioLikeRepository.deleteByUserIdAndPortfolioId(userId, portfolioId);
+            isLiked = false;
+            message = "좋아요가 취소되었습니다.";
+        } else {
+            // 좋아요 추가
+            PortfolioLike portfolioLike = PortfolioLike.builder()
+                    .userId(userId)
+                    .portfolioId(portfolioId)
+                    .build();
+            portfolioLikeRepository.save(portfolioLike);
+            isLiked = true;
+            message = "좋아요가 추가되었습니다.";
         }
-
-        // 4. 좋아요 생성
-        PortfolioLike portfolioLike = PortfolioLike.builder()
-                .userId(userId)
-                .portfolioId(portfolioId)
-                .build();
-        portfolioLikeRepository.save(portfolioLike);
-
-        // 5. 응답 생성
-        Long likeCount = portfolioLikeRepository.countByPortfolioId(portfolioId);
-        return PortfolioLikeDTO.Response.builder()
-                .portfolioId(portfolioId)
-                .isLiked(true)
-                .likeCount(likeCount)
-                .message("좋아요가 추가되었습니다.")
-                .build();
-    }
-
-    /**
-     * 포트폴리오 좋아요 삭제
-     */
-    @Transactional
-    public PortfolioLikeDTO.Response deletePortfolioLike(Long portfolioId) {
-        // 1. 로그인된 사용자 ID 획득
-        Long userId = AuthorizeUserId.getAuthorizedUserId();
-
-        // 2. 존재 여부 확인
-        if (!portfolioLikeRepository.existsByUserIdAndPortfolioId(userId, portfolioId)) {
-            throw new LikeNotFoundException("좋아요 기록을 찾을 수 없습니다.");
-        }
-
-        // 3. 좋아요 삭제
-        portfolioLikeRepository.deleteByUserIdAndPortfolioId(userId, portfolioId);
 
         // 4. 응답 생성
         Long likeCount = portfolioLikeRepository.countByPortfolioId(portfolioId);
         return PortfolioLikeDTO.Response.builder()
                 .portfolioId(portfolioId)
-                .isLiked(false)
+                .isLiked(isLiked)
                 .likeCount(likeCount)
-                .message("좋아요가 취소되었습니다.")
+                .message(message)
                 .build();
     }
 
