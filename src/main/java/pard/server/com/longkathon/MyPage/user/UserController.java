@@ -77,20 +77,6 @@ public class UserController {
     ) {
         return ResponseEntity.ok(userService.filter(departments, name, firstStudentId, secondStudentId));
     }
-
-    @PostMapping("/keepMate")// 사용자 찜하기, 찜 당한 유저 id를 받음
-    public ResponseEntity<Void> keepMate(@PathVariable Long userId) {
-        Long myId = AuthorizeUserId.getAuthorizedUserId();
-        keepMateService.createKeepMate(myId, userId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/keepMate") // 찜한 사용자 삭제
-    public ResponseEntity<Void> keepMateDelete(@PathVariable Long userId) {
-        Long myId = AuthorizeUserId.getAuthorizedUserId();
-        keepMateService.deleteKeepMate(myId, userId);
-        return ResponseEntity.noContent().build();
-    }
 //--------------------------------상세 프로필 페이지------------------------------------
     @GetMapping("/equal/{userId}") //프로필 게시글 클릭 시 본인 것인지 유무확인
     public ResponseEntity<Boolean> equal(@PathVariable String userId) {

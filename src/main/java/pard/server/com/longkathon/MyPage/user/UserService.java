@@ -175,6 +175,7 @@ public class UserService {
                         .skillList(skillStackListService.read(u.getUserId()))
                         .peerGoodKeywords(peerReviewService.goodKeywordTop3(u.getUserId()))
                         .imageUrl(userFileService.getURL(u.getUserId()))
+                        .isKeepMate(keepMateService.isKeptByCurrentUser(u.getUserId()))
                         .build()).toList();
 
         List<RecruitingDTO.RecruitingRes5> recruitingFeedList = recruitings.stream()
@@ -217,6 +218,7 @@ public class UserService {
                         .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
                         .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
                         .imageUrl(userFileService.getURL(user.getUserId()))
+                        .isKeepMate(keepMateService.isKeptByCurrentUser(user.getUserId()))
                         .build()).toList();
 
     }
@@ -278,6 +280,7 @@ public class UserService {
                             .peerGoodKeywords(goodKeywords)
                             .imageUrl(imageUrl)
                             .goodKeywordCount(peerReviewService.goodKeywordCount(u.getUserId()))
+                            .isKeepMate(keepMateService.isKeptByCurrentUser(u.getUserId()))
                             .build();
                 })
                 .toList();
@@ -301,6 +304,7 @@ public class UserService {
                         .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
                         .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
                         .imageUrl(userFileService.getURL(user.getUserId()))
+                        .isKeepMate(keepMateService.isKeptByCurrentUser(user.getUserId()))
                         .build())
                 .toList();
     }
@@ -320,6 +324,7 @@ public class UserService {
                         .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
                         .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
                         .imageUrl(userFileService.getURL(user.getUserId()))
+                        .isKeepMate(keepMateService.isKeptByCurrentUser(user.getUserId()))
                         .build()).toList();
     }
 
@@ -338,6 +343,7 @@ public class UserService {
                         .peerGoodKeywords(peerReviewService.goodKeywordTop3(user.getUserId()))
                         .goodKeywordCount(peerReviewService.goodKeywordCount(user.getUserId()))
                         .imageUrl(userFileService.getURL(user.getUserId()))
+                        .isKeepMate(keepMateService.isKeptByCurrentUser(user.getUserId()))
                         .build()).toList();
     }
 

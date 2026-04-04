@@ -128,6 +128,9 @@ public class UserDTO {
         private String imageUrl;
 
         private int goodKeywordCount; //유저가 받은 긍정 키워드 총 개수
+
+        @Builder.Default
+        private boolean isKeepMate = false; //현재 로그인된 유저가 이 유저를 찜했는지 여부
     }
 
     @Builder
