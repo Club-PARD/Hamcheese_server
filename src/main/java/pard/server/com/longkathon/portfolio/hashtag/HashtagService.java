@@ -1,10 +1,11 @@
 package pard.server.com.longkathon.portfolio.hashtag;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
-import pard.server.com.longkathon.portfolio.Portfolio;
+
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -13,7 +14,10 @@ public class HashtagService {
     private final HashtagRepository hashtagRepository;
 
     //hashtag 저장
-    public void save(List<String> hashtagList, Long portfolioId) {
+    @Transactional
+    public void deleteAndSave(List<String> hashtagList, Long portfolioId) {
+        hashtagRepository.deleteAllByPortfolioId(portfolioId);
+
         List<Hashtag> entityList = hashtagList.stream()
                 .map(hashtagName -> Hashtag.builder()
                         .portfolioId(portfolioId)
@@ -23,9 +27,10 @@ public class HashtagService {
         hashtagRepository.saveAll(entityList);
     }
 
-    //hashtag삭제
-    @Transactional
-    public void delete(Long portfolioId) {
-        hashtagRepository.deleteAllByPortfolioId(portfolioId);
+
+    //해당 포폴에 속한 해시태그 읽기
+    public List<String> read(Long portfolioId) {
+        List<Hashtag> hashtagList = hashtagRepository.findAllByPortfolioId(portfolioId);
+        return hashtagList.stream().map(hashtag -> hashtag.getHashtagName()).collect(Collectors.toList());
     }
 }
