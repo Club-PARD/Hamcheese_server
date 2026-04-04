@@ -25,7 +25,7 @@ public class RecruitingController {
     }
 
     @GetMapping("/filter") // 모집글 필터 적용
-    public ResponseEntity<List<RecruitingDTO.RecruitingRes3>> filter(
+    public ResponseEntity<List<RecruitingDTO.RecruitingRes1>> filter(
             @RequestParam(name = "type", required = false) List<String> type,
             @RequestParam(name = "departments", required = false) List<String> departments,
             @RequestParam(name = "name", required = false) String name
@@ -35,7 +35,7 @@ public class RecruitingController {
 
 
     @GetMapping("") // 내 모집글 조회
-    public ResponseEntity<List<RecruitingDTO.RecruitingRes4>> viewMyRecruitings() {
+    public ResponseEntity<List<RecruitingDTO.RecruitingRes1>> viewMyRecruitings() {
         Long myId = AuthorizeUserId.getAuthorizedUserId();
         return ResponseEntity.ok(recruitingService.viewRecruitingMine(myId));
     }

@@ -10,9 +10,9 @@ import lombok.*;
 public class RecruitingScrap { //스크랩한 모집글
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long RecruitingScrapId;
+    private Long recruitingScrapId;
 
     private Long userId; // 어느 사용자의 스크랩인지
 
-    private Long RecruitingId; // 어느 모집글인지
+    private Long recruitingId; // 어느 모집글인지
 }

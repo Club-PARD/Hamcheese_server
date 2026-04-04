@@ -82,6 +82,7 @@ public class RecruitingDTO {
         @Builder.Default
         private List<String> myKeyword = new ArrayList<>();
         private String date;
+        private Long scrapCount; // 스크랩 수
 
     }
 
@@ -109,46 +110,9 @@ public class RecruitingDTO {
         @Builder.Default
         private List<RecruitingDTO.RecruitingRes_recentPosts> postingList = new ArrayList<>();
         private Boolean canEdit;
+        private Boolean isScrap; // 현재 사용자의 스크랩 여부
     }
 
-    @Builder
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RecruitingRes3 { // 모집하기 페이지 필터 Res
-        private Long recruitingId;
-        private String name;
-        private String projectType;
-        private String projectSpecific;// 구체적인 이름 (수업 이름)
-        private String classes;//분반
-        private String topic;//주제
-        private int totalPeople;//전체인원
-        private int recruitPeople;//모집인원
-        private String title;//제목
-        @Builder.Default
-        private List<String> myKeyword = new ArrayList<>();
-        private String date;
-
-    }
-
-    @Builder
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RecruitingRes4 { // 내가 작성한 모집글 조회
-        private Long recruitingId;
-        private String name;
-        private String projectType;
-        private String projectSpecific;
-        private String classes;
-        private String topic;
-        private int totalPeople;
-        private int recruitPeople;
-        private String title;
-        @Builder.Default
-        private List<String> myKeyword = new ArrayList<>();
-        private String date;
-    }
 
     @Builder
     @Getter

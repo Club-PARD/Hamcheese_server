@@ -29,6 +29,8 @@ public class Recruiting extends BaseEntity { //구인 글 포스팅
 
     private String title;//제목
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String context; //내용
 
     // 생성 시점은 BaseEntity의 createdAt 필드 사용

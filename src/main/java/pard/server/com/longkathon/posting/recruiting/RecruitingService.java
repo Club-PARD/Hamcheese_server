@@ -12,7 +12,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.time.ZoneId;
@@ -25,6 +27,7 @@ public class RecruitingService {
     private final UserRepo userRepo;
     private final UserFileRepo userFileRepo;
     private final UserFileService userFileService;
+    private final pard.server.com.longkathon.likes.scrapRecruiting.RecruitingScrapRepository recruitingScrapRepository;
 
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
     private static final DateTimeFormatter KOREA_FMT =
@@ -57,6 +60,21 @@ public class RecruitingService {
     public List<RecruitingDTO.RecruitingRes1> viewAllRecruiting() { // 모집 페이지 전체 조회
         List<Recruiting> recruitings = recruitingRepo.findAllByOrderByRecruitingIdDesc();
 
+        // N+1 방지: 스크랩 수 배치 조회
+        List<Long> recruitingIds = recruitings.stream()
+                .map(Recruiting::getRecruitingId)
+                .toList();
+
+        Map<Long, Long> scrapCountMap = new HashMap<>();
+        if (!recruitingIds.isEmpty()) {
+            List<Map<String, Object>> scrapCounts = recruitingScrapRepository.countScrapsByRecruitingIds(recruitingIds);
+            for (Map<String, Object> row : scrapCounts) {
+                Long recruitingId = ((Number) row.get("recruitingId")).longValue();
+                Long count = ((Number) row.get("scrapCount")).longValue();
+                scrapCountMap.put(recruitingId, count);
+            }
+        }
+
         return recruitings.stream()
                 .map(r -> {
                     // 1) userId -> 이름
@@ -71,7 +89,10 @@ public class RecruitingService {
                             .toList();
                     String dateStr = formatRecruitingDate(r.getCreatedAt());
 
-                    // 3) DTO 조립
+                    // 3) 스크랩 수
+                    Long scrapCount = scrapCountMap.getOrDefault(r.getRecruitingId(), 0L);
+
+                    // 4) DTO 조립
                     return RecruitingDTO.RecruitingRes1.builder()
                             .recruitingId(r.getRecruitingId())
                             .name(writerName)
@@ -84,6 +105,7 @@ public class RecruitingService {
                             .title(r.getTitle())
                             .myKeyword(myKeywordList)
                             .date(dateStr)
+                            .scrapCount(scrapCount)
                             .build();
                 })
                 .toList();
@@ -141,6 +163,9 @@ public class RecruitingService {
 
         boolean canEdit = recruiting.getUserId().equals(myId);
 
+        // 스크랩 여부 확인
+        boolean isScrap = recruitingScrapRepository.existsByUserIdAndRecruitingId(myId, recruitingId);
+
         return RecruitingDTO.RecruitingRes2.builder()
                 .name(writerName)
                 .projectType(recruiting.getProjectType())
@@ -159,12 +184,13 @@ public class RecruitingService {
                 .imageUrl(userFileService.getURL(recruiting.getUserId()))
                 .postingList(recentPosts)
                 .canEdit(canEdit)
+                .isScrap(isScrap)
                 .build();
     }
 
 
     @Transactional
-    public List<RecruitingDTO.RecruitingRes3> filter(
+    public List<RecruitingDTO.RecruitingRes1> filter(
             List<String> type,
             List<String> departments,
             String title
@@ -213,7 +239,22 @@ public class RecruitingService {
             }
         }
 
-        // 3) DTO 변환 (기존 로직 그대로)
+        // N+1 방지: 스크랩 수 배치 조회
+        List<Long> recruitingIds = recruitings.stream()
+                .map(Recruiting::getRecruitingId)
+                .toList();
+
+        Map<Long, Long> scrapCountMap = new HashMap<>();
+        if (!recruitingIds.isEmpty()) {
+            List<Map<String, Object>> scrapCounts = recruitingScrapRepository.countScrapsByRecruitingIds(recruitingIds);
+            for (Map<String, Object> row : scrapCounts) {
+                Long recruitingId = ((Number) row.get("recruitingId")).longValue();
+                Long count = ((Number) row.get("scrapCount")).longValue();
+                scrapCountMap.put(recruitingId, count);
+            }
+        }
+
+        // 3) DTO 변환
         return recruitings.stream()
                 .map(r -> {
                     String writerName = userRepo.findById(r.getUserId())
@@ -226,9 +267,13 @@ public class RecruitingService {
                             .map(MyKeyword::getKeyword)
                             .toList();
 
-                    String dateStr = (r.getCreatedAt() == null) ? null : r.getCreatedAt().toString();
+                    // 날짜 포맷 통일
+                    String dateStr = formatRecruitingDate(r.getCreatedAt());
 
-                    return RecruitingDTO.RecruitingRes3.builder()
+                    // 스크랩 수
+                    Long scrapCount = scrapCountMap.getOrDefault(r.getRecruitingId(), 0L);
+
+                    return RecruitingDTO.RecruitingRes1.builder()
                             .recruitingId(r.getRecruitingId())
                             .name(writerName)
                             .projectType(r.getProjectType())
@@ -240,6 +285,7 @@ public class RecruitingService {
                             .title(r.getTitle())
                             .myKeyword(myKeywordList)
                             .date(dateStr)
+                            .scrapCount(scrapCount)
                             .build();
                 })
                 .toList();
@@ -249,8 +295,23 @@ public class RecruitingService {
 
 
     @Transactional
-    public List<RecruitingDTO.RecruitingRes4> viewRecruitingMine(Long myId) { // 내 모집글 조회
+    public List<RecruitingDTO.RecruitingRes1> viewRecruitingMine(Long myId) { // 내 모집글 조회
         List<Recruiting> recruitings = recruitingRepo.findByUserIdOrderByRecruitingIdDesc(myId);
+
+        // N+1 방지: 스크랩 수 배치 조회
+        List<Long> recruitingIds = recruitings.stream()
+                .map(Recruiting::getRecruitingId)
+                .toList();
+
+        Map<Long, Long> scrapCountMap = new HashMap<>();
+        if (!recruitingIds.isEmpty()) {
+            List<Map<String, Object>> scrapCounts = recruitingScrapRepository.countScrapsByRecruitingIds(recruitingIds);
+            for (Map<String, Object> row : scrapCounts) {
+                Long recruitingId = ((Number) row.get("recruitingId")).longValue();
+                Long count = ((Number) row.get("scrapCount")).longValue();
+                scrapCountMap.put(recruitingId, count);
+            }
+        }
 
         return recruitings.stream()
                 .map(r -> {
@@ -263,10 +324,13 @@ public class RecruitingService {
                             .map(MyKeyword::getKeyword)
                             .toList();
 
-                    // date (LocalDate -> String)
-                    String dateStr = r.getCreatedAt() == null ? null : r.getCreatedAt().toString();
+                    // 날짜 포맷 통일
+                    String dateStr = formatRecruitingDate(r.getCreatedAt());
 
-                    return RecruitingDTO.RecruitingRes4.builder()
+                    // 스크랩 수
+                    Long scrapCount = scrapCountMap.getOrDefault(r.getRecruitingId(), 0L);
+
+                    return RecruitingDTO.RecruitingRes1.builder()
                             .recruitingId(r.getRecruitingId())
                             .name(writerName)
                             .projectType(r.getProjectType())
@@ -278,6 +342,7 @@ public class RecruitingService {
                             .title(r.getTitle())
                             .myKeyword(myKeywordList)
                             .date(dateStr)
+                            .scrapCount(scrapCount)
                             .build();
                 })
                 .toList();
