@@ -10,12 +10,14 @@ import pard.server.com.longkathon.MyPage.user.User;
 import pard.server.com.longkathon.MyPage.user.UserRepo;
 import pard.server.com.longkathon.common.exception.PortfolioNotFoundException;
 import pard.server.com.longkathon.likes.likePortfolio.PortfolioLikeRepository;
+import pard.server.com.longkathon.likes.likePortfolio.PortfolioLikeService;
 import pard.server.com.longkathon.portfolio.hashtag.HashtagService;
 import pard.server.com.longkathon.portfolio.portfolioFile.PortfolioFileRepository;
 import pard.server.com.longkathon.portfolio.portfolioFile.PortfolioFileService;
 import pard.server.com.longkathon.portfolio.portfolioURL.PortfolioURLService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class PortfolioService {
     private final PortfolioFileService portfolioFileService;
     private final UserRepo userRepo;
     private final PortfolioLikeRepository portfolioLikeRepository;
+    private final PortfolioLikeService portfolioLikeService;
     private final HashtagService hashtagService;
     private final PortfolioURLService portfolioURLService;
     private final PortfolioFileRepository portfolioFileRepository;
@@ -235,6 +238,9 @@ public class PortfolioService {
         List<String> linkList = portfolioURLService.read(portfolioId);
         List<String> imageUrlList = portfolioFileService.readImageUrls(portfolioId);
 
+        // 현재 사용자의 좋아요 상태 조회
+        boolean isLiked = portfolioLikeService.isLikedByCurrentUser(portfolioId);
+
         // DTO 생성 및 반환
         return PortfolioDTO.Res2.builder()
                 .portfolioId(portfolio.getPortfolioId())
@@ -247,6 +253,37 @@ public class PortfolioService {
                 .linkList(linkList)
                 .hashtagList(hashtagList)
                 .imageUrlList(imageUrlList)
+                .isLiked(isLiked)
                 .build();
+    }
+
+    /**
+     * 현재 로그인한 유저가 좋아요 누른 포트폴리오 리스트 조회
+     * @param userId 로그인한 유저의 ID
+     * @return 좋아요 누른 포트폴리오 DTO 리스트 (최신 좋아요순)
+     */
+    @Transactional(readOnly = true)
+    public List<PortfolioDTO.Res1> getLikedPortfolios(Long userId) {
+        // 1. 유저가 좋아요 누른 포트폴리오 ID 리스트 조회 (최신순)
+        List<Long> likedPortfolioIds = portfolioLikeRepository.findPortfolioIdsByUserId(userId);
+
+        // 2. 좋아요 누른 포트폴리오가 없으면 빈 리스트 반환
+        if (likedPortfolioIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 3. 포트폴리오 ID로 Portfolio 엔티티 조회 (한 번의 쿼리로 N+1 방지)
+        List<Portfolio> portfolios = portfolioRepository.findAllByPortfolioIdIn(likedPortfolioIds);
+
+        // 4. Portfolio ID와 Portfolio 엔티티를 매핑 (정렬 순서 유지를 위함)
+        Map<Long, Portfolio> portfolioMap = portfolios.stream()
+                .collect(Collectors.toMap(Portfolio::getPortfolioId, portfolio -> portfolio));
+
+        // 5. 좋아요 누른 순서대로 DTO 변환 (likedPortfolioIds 순서 유지)
+        return likedPortfolioIds.stream()
+                .map(portfolioMap::get)
+                .filter(Objects::nonNull) // 삭제된 포트폴리오 필터링
+                .map(this::convertToDTO)
+                .toList();
     }
 }

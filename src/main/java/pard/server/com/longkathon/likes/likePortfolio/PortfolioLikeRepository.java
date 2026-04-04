@@ -37,4 +37,13 @@ public interface PortfolioLikeRepository extends JpaRepository<PortfolioLike, Lo
            "WHERE pl.portfolioId IN :portfolioIds " +
            "GROUP BY pl.portfolioId")
     List<Object[]> countLikesByPortfolioIds(@Param("portfolioIds") List<Long> portfolioIds);
+
+    /**
+     * 특정 유저가 좋아요 누른 포트폴리오 ID 리스트 조회 (최신순)
+     * PortfolioLikeId 내림차순 = 최근 좋아요한 순서
+     */
+    @Query("SELECT pl.portfolioId FROM PortfolioLike pl " +
+           "WHERE pl.userId = :userId " +
+           "ORDER BY pl.PortfolioLikeId DESC")
+    List<Long> findPortfolioIdsByUserId(@Param("userId") Long userId);
 }

@@ -48,6 +48,8 @@ public class PortfolioDTO {
         private List<String> hashtagList;
 
         private List<String> imageUrlList;
+
+        private Boolean isLiked; // 현재 사용자의 좋아요 상태
     }
 
     @AllArgsConstructor

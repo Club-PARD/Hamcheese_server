@@ -3,12 +3,18 @@ package pard.server.com.longkathon.likes.likePortfolio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pard.server.com.longkathon.MyPage.user.AuthorizeUserId;
+import pard.server.com.longkathon.portfolio.PortfolioDTO;
+import pard.server.com.longkathon.portfolio.PortfolioService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/portfolioLike")
 @RequiredArgsConstructor
 public class PortfolioLikeController {
     private final PortfolioLikeService portfolioLikeService;
+    private final PortfolioService portfolioService;
 
     /**
      * 포트폴리오 좋아요 추가
@@ -47,18 +53,13 @@ public class PortfolioLikeController {
     }
 
     /**
-     * 현재 로그인된 사용자의 좋아요 상태 확인
-     * GET /portfolioLike/status/{portfolioId}
+     * 현재 로그인한 유저가 좋아요 누른 포트폴리오 리스트 조회
+     * GET /portfolioLike/findAll
      */
-    @GetMapping("/status/{portfolioId}")
-    public ResponseEntity<PortfolioLikeDTO.StatusResponse> getLikeStatus(@PathVariable Long portfolioId) {
-        boolean isLiked = portfolioLikeService.isLikedByCurrentUser(portfolioId);
-
-        PortfolioLikeDTO.StatusResponse response = PortfolioLikeDTO.StatusResponse.builder()
-                .portfolioId(portfolioId)
-                .isLiked(isLiked)
-                .build();
-
-        return ResponseEntity.ok(response);
+    @GetMapping("/findAll")
+    public ResponseEntity<List<PortfolioDTO.Res1>> findAll() {
+        Long userId = AuthorizeUserId.getAuthorizedUserId();
+        List<PortfolioDTO.Res1> likedPortfolios = portfolioService.getLikedPortfolios(userId);
+        return ResponseEntity.ok(likedPortfolios);
     }
 }
