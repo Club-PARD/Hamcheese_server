@@ -191,4 +191,8 @@ public class PortfolioService {
                 .map(this::convertToDTO)
                 .toList();
     }
+
+    public PortfolioDTO.Res2 detail(Long portfolioId) {
+
+    }
 }

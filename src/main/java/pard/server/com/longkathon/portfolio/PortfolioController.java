@@ -24,7 +24,7 @@ public class PortfolioController { //상세 프로필 페이지, 메인페이지
         return ResponseEntity.ok(portfolioService.getPortfolioTabRealOrder(userId));
     }
 
-    //---------------------메인 페이지------------------------------------
+    //--------------------- 메인 페이지 ------------------------------------
     @GetMapping("/filter") //메인 페이지의 포트폴리오 기본 get요청도 filter로 통합
     public ResponseEntity<List<PortfolioDTO.Res1>> filter(
             @RequestParam(name = "departments", required = false) List <String> departments,
@@ -36,5 +36,12 @@ public class PortfolioController { //상세 프로필 페이지, 메인페이지
         List<PortfolioDTO.Res1> result = portfolioService.filter(
                 departments, name, firstStudentId, secondStudentId, ordering);
         return ResponseEntity.ok(result);
+    }
+
+    //------------------ 모든 페이지 공통 ------------------------------
+
+    @GetMapping("/detail/{portfolioId}") //포폴 상세 정보
+    public ResponseEntity<PortfolioDTO.Res2> detail(@PathVariable Long portfolioId) {
+
     }
 }

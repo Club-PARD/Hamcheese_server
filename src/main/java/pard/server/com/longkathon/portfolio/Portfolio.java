@@ -19,6 +19,10 @@ public class Portfolio extends BaseEntity {
 
     private String title; //포폴 제목
 
+    private String organization; //진행된 단체
+
+    private String category; //기여 분야
+
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String description; //포폴 설명글

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PortfolioDTO {
     @AllArgsConstructor
@@ -21,4 +22,31 @@ public class PortfolioDTO {
 
         private String imageUrl; //썸네일 url
     }
+
+    @AllArgsConstructor
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    public static class Res2 {
+        private Long portfolioId;
+
+        private String title;
+
+        private String organization;
+
+        private String category; //기여 분야
+
+        private LocalDateTime startDate; // 시작 날짜
+
+        private LocalDateTime endDate; // 종료날짜
+
+        private String description;
+
+        private List<String> linkList;
+
+        private List<String> hashtagList;
+
+        private List<String> imageUrlList;
+    }
+
 }
