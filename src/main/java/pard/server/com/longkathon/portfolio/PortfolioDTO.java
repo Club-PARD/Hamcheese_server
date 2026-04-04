@@ -3,6 +3,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,6 +48,31 @@ public class PortfolioDTO {
         private List<String> hashtagList;
 
         private List<String> imageUrlList;
+    }
+
+    @AllArgsConstructor
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    public static class Req1 {
+
+        private String title;
+
+        private String organization;
+
+        private String category; //기여 분야
+
+        private LocalDateTime startDate; // 시작 날짜
+
+        private LocalDateTime endDate; // 종료날짜
+
+        private String description;
+
+        private List<String> linkList;
+
+        private List<String> hashtagList;
+
+        //사진 multipartFile은 dto와 분리해서 받기.
     }
 
 }

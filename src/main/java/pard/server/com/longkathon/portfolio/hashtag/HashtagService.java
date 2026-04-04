@@ -27,7 +27,6 @@ public class HashtagService {
         hashtagRepository.saveAll(entityList);
     }
 
-
     //해당 포폴에 속한 해시태그 읽기
     public List<String> read(Long portfolioId) {
         List<Hashtag> hashtagList = hashtagRepository.findAllByPortfolioId(portfolioId);

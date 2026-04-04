@@ -10,7 +10,7 @@ import lombok.*;
 public class KeepMate { // 찜한 메이트
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long KeepMateId;
+    private Long keepMateId;
 
     private Long userId; // 어느 사용자의 찜인지
 

@@ -1,7 +1,9 @@
 package pard.server.com.longkathon.portfolio;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pard.server.com.longkathon.MyPage.user.AuthorizeUserId;
 
 import java.util.List;
@@ -38,10 +40,36 @@ public class PortfolioController { //상세 프로필 페이지, 메인페이지
         return ResponseEntity.ok(result);
     }
 
+    //--------------------마이 페이지 ----------------------------------
+
+    //게시글 생성
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> create(
+            @RequestPart("request") PortfolioDTO.Req1 requestDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ) {
+        Long userId = AuthorizeUserId.getAuthorizedUserId();
+        portfolioService.create(requestDTO, images, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping(value = "/{portfolioId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> update(
+            @PathVariable Long portfolioId,
+            @RequestPart("request") PortfolioDTO.Req1 requestDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ){
+        portfolioService.update(portfolioId, requestDTO, images);
+        return ResponseEntity.ok().build();
+    }
+
     //------------------ 모든 페이지 공통 ------------------------------
 
     @GetMapping("/detail/{portfolioId}") //포폴 상세 정보
     public ResponseEntity<PortfolioDTO.Res2> detail(@PathVariable Long portfolioId) {
-
+        PortfolioDTO.Res2 response = portfolioService.detail(portfolioId);
+        return ResponseEntity.ok(response);
     }
+
+
 }

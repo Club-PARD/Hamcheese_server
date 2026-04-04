@@ -5,15 +5,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pard.server.com.longkathon.MyPage.user.User;
 import pard.server.com.longkathon.MyPage.user.UserRepo;
+import pard.server.com.longkathon.common.exception.PortfolioNotFoundException;
 import pard.server.com.longkathon.likes.likePortfolio.PortfolioLikeRepository;
+import pard.server.com.longkathon.portfolio.hashtag.HashtagService;
+import pard.server.com.longkathon.portfolio.portfolioFile.PortfolioFileRepository;
 import pard.server.com.longkathon.portfolio.portfolioFile.PortfolioFileService;
+import pard.server.com.longkathon.portfolio.portfolioURL.PortfolioURLService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,9 @@ public class PortfolioService {
     private final PortfolioFileService portfolioFileService;
     private final UserRepo userRepo;
     private final PortfolioLikeRepository portfolioLikeRepository;
+    private final HashtagService hashtagService;
+    private final PortfolioURLService portfolioURLService;
+    private final PortfolioFileRepository portfolioFileRepository;
 
     //-------------------------상세 프로필 페이지 -------------------------------------
     public List<PortfolioDTO.Res1> getPortfolioTabPostOrder (Long userId) {
@@ -192,7 +197,56 @@ public class PortfolioService {
                 .toList();
     }
 
-    public PortfolioDTO.Res2 detail(Long portfolioId) {
+    //----------------------- 마이 페이지 -------------------------------------
+    //포폴 생성
+    public void create(PortfolioDTO.Req1 requestDTO, List<MultipartFile> images, Long userId) {
+        //엔티티 생성
+        Portfolio portfolio = Portfolio.builder()
+                .title(requestDTO.getTitle())
+                .userId(userId)
+                .organization(requestDTO.getOrganization())
+                .category(requestDTO.getCategory())
+                .description(requestDTO.getDescription())
+                .startDate(requestDTO.getStartDate())
+                .endDate(requestDTO.getEndDate())
+                .build();
+        portfolioRepository.save(portfolio);
 
+        hashtagService.deleteAndSave(requestDTO.getHashtagList(), portfolio.getPortfolioId());
+        portfolioURLService.deleteAndSave(requestDTO.getLinkList(), portfolio.getPortfolioId());
+        portfolioFileService.uploadImage(portfolio.getPortfolioId(), images);
+    }
+
+    // 포폴 업데이트
+    public void update(Long portfolioId, PortfolioDTO.Req1 requestDTO, List<MultipartFile> images) {
+        hashtagService.deleteAndSave(requestDTO.getHashtagList(), portfolioId);
+        portfolioURLService.deleteAndSave(requestDTO.getLinkList(), portfolioId);
+        portfolioFileService.updateImage(portfolioId, images);
+    }
+
+    // 포폴 상세 내용
+    public PortfolioDTO.Res2 detail(Long portfolioId) {
+        // 포트폴리오 조회 및 예외 처리
+        Portfolio portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new PortfolioNotFoundException("해당포트폴리오가 존재하지 않습니다."));
+
+        // 관련 데이터 조회 (각 서비스의 read 메서드 사용)
+        List<String> hashtagList = hashtagService.read(portfolioId);
+        List<String> linkList = portfolioURLService.read(portfolioId);
+        List<String> imageUrlList = portfolioFileService.readImageUrls(portfolioId);
+
+        // DTO 생성 및 반환
+        return PortfolioDTO.Res2.builder()
+                .portfolioId(portfolio.getPortfolioId())
+                .title(portfolio.getTitle())
+                .organization(portfolio.getOrganization())
+                .category(portfolio.getCategory())
+                .startDate(portfolio.getStartDate())
+                .endDate(portfolio.getEndDate())
+                .description(portfolio.getDescription())
+                .linkList(linkList)
+                .hashtagList(hashtagList)
+                .imageUrlList(imageUrlList)
+                .build();
     }
 }
